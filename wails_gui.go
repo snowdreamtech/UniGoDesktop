@@ -6,19 +6,23 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/snowdreamtech/unigodesktop/cmd"
 	"github.com/snowdreamtech/unigodesktop/internal/env"
+	"github.com/snowdreamtech/unigodesktop/pkg/config"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 //go:embed all:frontend/dist
@@ -55,6 +59,15 @@ func RunWails() error {
 	fmt.Println(">>> Starting Wails GUI Runtime...")
 	app := NewApp()
 
+	// Determine native appearance and background color from saved configuration
+	// to prevent flash-of-white / mismatched titlebars upon startup.
+	macAppearance := mac.NSAppearanceNameDarkAqua
+	backgroundColour := &options.RGBA{R: 7, G: 10, B: 18, A: 255}
+	if cfg, err := config.Load(); err == nil && cfg != nil && cfg.Theme == "light" {
+		macAppearance = mac.NSAppearanceNameAqua
+		backgroundColour = &options.RGBA{R: 241, G: 245, B: 249, A: 255}
+	}
+
 	return wails.Run(&options.App{
 		Title:       "UniGoDesktop",
 		Width:       1180,
@@ -65,10 +78,16 @@ func RunWails() error {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 7, G: 10, B: 18, A: 255},
+		BackgroundColour: backgroundColour,
 		OnStartup:        app.startup,
-		OnShutdown:       app.shutdown,
-		OnBeforeClose:    app.beforeClose,
+		OnDomReady: func(ctx context.Context) {
+			time.AfterFunc(50*time.Millisecond, func() {
+				wailsRuntime.Show(ctx)
+				wailsRuntime.WindowShow(ctx)
+			})
+		},
+		OnShutdown:    app.shutdown,
+		OnBeforeClose: app.beforeClose,
 		SingleInstanceLock: &options.SingleInstanceLock{
 			UniqueId:               "com.snowdreamtech.unigodesktop",
 			OnSecondInstanceLaunch: app.onSecondInstanceLaunch,
@@ -86,7 +105,7 @@ func RunWails() error {
 		},
 		Mac: &mac.Options{
 			TitleBar:             mac.TitleBarHiddenInset(),
-			Appearance:           mac.DefaultAppearance,
+			Appearance:           macAppearance,
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
 			About: &mac.AboutInfo{

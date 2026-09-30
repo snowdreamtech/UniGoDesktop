@@ -154,6 +154,11 @@ function applyTheme(themeName: string) {
     applied = isDark ? "dark" : "light";
   }
   document.documentElement.setAttribute("data-theme", applied);
+  try {
+    localStorage.setItem("unigo_theme_cache", themeName);
+  } catch (e) {
+    // localStorage may be unavailable
+  }
 }
 
 async function loadFullConfig() {

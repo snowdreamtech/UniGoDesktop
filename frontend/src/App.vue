@@ -193,6 +193,11 @@ function applyTheme(themeName: string) {
     applied = isDark ? "dark" : "light";
   }
   document.documentElement.setAttribute("data-theme", applied);
+  try {
+    localStorage.setItem("unigo_theme_cache", themeName);
+  } catch (e) {
+    // localStorage may be unavailable
+  }
 
   if (isWailsRuntime()) {
     try {
@@ -284,9 +289,11 @@ async function initApp() {
           console.warn("Failed to show window:", err);
         }
       }
+      window.dispatchEvent(new Event("unigo:config-ready"));
     }
   } else {
     applyTheme("dark");
+    window.dispatchEvent(new Event("unigo:config-ready"));
   }
 }
 
