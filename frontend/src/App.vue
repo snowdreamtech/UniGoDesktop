@@ -373,16 +373,26 @@ onUnmounted(() => {
 }
 
 /* Ensure interactive components remain clickable while background can drag window */
+.app-container,
+.app-header,
+.main-content {
+  --wails-draggable: drag;
+  -webkit-app-region: drag;
+}
+
 .header-actions,
-.main-content,
 button,
 input,
 select,
 textarea,
 a,
+pre,
+code,
 .lang-dropdown-menu,
-.settings-modal-card {
+.settings-modal-card,
+.about-modal-card {
   --wails-draggable: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 /* Header */
