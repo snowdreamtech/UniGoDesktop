@@ -363,21 +363,20 @@ onUnmounted(() => {
   box-sizing: border-box;
   overflow-x: hidden;
   cursor: default;
-  --wails-draggable: drag;
+  --wails-draggable: no-drag;
+  -webkit-app-region: no-drag;
 }
 
-/* Header can also drag the window, while actions inside remain clickable */
+/* Header can drag the window, while actions inside remain clickable */
 .app-header {
   cursor: default;
   --wails-draggable: drag;
+  -webkit-app-region: drag;
 }
 
-/* Ensure interactive components remain clickable while background can drag window */
-.app-container,
-.app-header,
 .main-content {
-  --wails-draggable: drag;
-  -webkit-app-region: drag;
+  --wails-draggable: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 .header-actions,

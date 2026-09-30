@@ -170,6 +170,17 @@ svg {
   scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
 }
 
+::-webkit-scrollbar,
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track-piece,
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  --wails-draggable: no-drag !important;
+  -webkit-app-region: no-drag !important;
+}
+
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
