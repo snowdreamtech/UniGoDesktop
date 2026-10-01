@@ -90,7 +90,7 @@ export function useLogPanel(options: UseLogPanelOptions) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `unibootdesktop-log-${new Date().toISOString().slice(0, 10)}.log`;
+      a.download = `unigodesktop-log-${new Date().toISOString().slice(0, 10)}.log`;
       a.click();
       URL.revokeObjectURL(url);
       showToast(t("log.exported_toast"), "success");
@@ -133,7 +133,7 @@ export function useLogPanel(options: UseLogPanelOptions) {
         {
           timestamp: new Date().toISOString(),
           level: "INFO",
-          message: "UniBootDesktop engine ready. Real-time log stream connected.",
+          message: "UniGoDesktop engine ready. Real-time log stream connected.",
         },
       ];
     }

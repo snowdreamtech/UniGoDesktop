@@ -14,7 +14,7 @@ func TestCalculateFileChecksum(t *testing.T) {
 	tempDir := t.TempDir()
 	testFile := filepath.Join(tempDir, "test.iso")
 
-	content := []byte("Hello UniBoot ISO Checksum Test Data")
+	content := []byte("Hello UniGo Checksum Test Data")
 	if err := os.WriteFile(testFile, content, 0644); err != nil {
 		t.Fatalf("failed to write test file: %v", err)
 	}

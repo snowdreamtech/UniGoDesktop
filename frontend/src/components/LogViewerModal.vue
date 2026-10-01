@@ -187,7 +187,7 @@ function exportLogFile() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `uniboot_log_${new Date().toISOString().slice(0, 10)}.log`;
+  a.download = `unigo_log_${new Date().toISOString().slice(0, 10)}.log`;
   a.click();
   URL.revokeObjectURL(url);
 }
