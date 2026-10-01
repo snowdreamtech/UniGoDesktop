@@ -21,6 +21,9 @@ import (
 	"github.com/snowdreamtech/unigodesktop/internal/env"
 	"github.com/snowdreamtech/unigodesktop/internal/logger"
 	"github.com/snowdreamtech/unigodesktop/pkg/config"
+	"github.com/snowdreamtech/unigodesktop/pkg/disk"
+	"github.com/snowdreamtech/unigodesktop/pkg/hypervisor"
+	"github.com/snowdreamtech/unigodesktop/pkg/privilege"
 	"github.com/snowdreamtech/unigodesktop/pkg/updater"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -67,10 +70,43 @@ func NewApp() *App {
 	return &App{}
 }
 
+// emitEvent safely emits a Wails event, guarding against unit test contexts and uninitialized runtime.
+func (a *App) emitEvent(eventName string, optionalData ...interface{}) {
+	if a.ctx == nil || a.ctx.Value("frontend") == nil {
+		return
+	}
+	if len(optionalData) > 0 {
+		wailsRuntime.EventsEmit(a.ctx, eventName, optionalData...)
+	} else {
+		wailsRuntime.EventsEmit(a.ctx, eventName)
+	}
+}
+
 // startup is called when the Wails application starts up.
 func (a *App) startup(ctx context.Context) {
 	a.ctx, a.cancel = context.WithCancel(ctx)
 	logger.SetWailsContext(ctx)
+
+	// Automatically notify frontend when removable USB storage devices are plugged or unplugged
+	disk.StartHotplugMonitor(a.ctx, func() {
+		logger.Debug("Removable storage hotplug change detected by background monitor")
+		a.emitEvent("disk:hotplug")
+		disk.InvalidateDiskCache()
+	})
+
+	hypervisor.RegisterVMExitHandler(func(targetDisk string, vmErr error) {
+		if vmErr != nil {
+			logger.Warn("Virtual machine session terminated with error", "disk", targetDisk, "error", vmErr)
+		} else {
+			logger.Info("Virtual machine session exited normally", "disk", targetDisk)
+		}
+		disk.InvalidateDiskCache()
+		a.emitEvent("vm:exit", map[string]interface{}{
+			"disk":  targetDisk,
+			"error": func() string { if vmErr != nil { return vmErr.Error() }; return "" }(),
+		})
+	})
+
 	logger.Info("UniGoDesktop Wails GUI runtime started successfully")
 }
 
@@ -80,6 +116,15 @@ func (a *App) shutdown(ctx context.Context) {
 	if a.cancel != nil {
 		a.cancel()
 	}
+
+	hypervisor.GetManager().CleanupAllUnmountedDisks()
+
+	// Cleanly disconnect and terminate active privileged worker session
+	if client := privilege.GetActiveWorkerClient(); client != nil {
+		_ = client.Close()
+		privilege.SetActiveWorkerClient(nil)
+	}
+
 	logger.Info("UniGoDesktop Wails GUI runtime shutting down")
 }
 
@@ -274,9 +319,7 @@ func (a *App) PerformGuiUpdate() (*updater.GuiUpdateResult, error) {
 	}
 
 	progressCallback := func(p updater.UpdateProgress) {
-		if a.ctx != nil {
-			wailsRuntime.EventsEmit(a.ctx, "gui-update-progress", p)
-		}
+		a.emitEvent("gui-update-progress", p)
 	}
 
 	return updater.PerformGuiUpdate(ctx, proxyPrefix, progressCallback)
@@ -351,4 +394,194 @@ func (a *App) ReloadAppMenu(lang string) error {
 	wailsRuntime.MenuUpdateApplicationMenu(a.ctx)
 	return nil
 }
+
+// GetDiskList returns all removable storage devices safely filtered.
+func (a *App) GetDiskList() ([]disk.DiskInfo, error) {
+	disks, err := disk.GetRemovableDisks()
+	if err != nil {
+		logger.Error("Failed to scan removable storage drives", "error", err)
+		return nil, err
+	}
+	filtered := make([]disk.DiskInfo, 0, len(disks))
+	for _, d := range disks {
+		if hypervisor.IsDiskInVMSession(d.Device) {
+			logger.Info("Filtering out disk currently engaged in active VM preview session", "disk", d.Device)
+			continue
+		}
+		filtered = append(filtered, d)
+	}
+	logger.Info(fmt.Sprintf("Scanned removable storage drives, found %d device(s)", len(filtered)))
+	return filtered, nil
+}
+
+// EjectDisk safely unmounts and ejects the target removable storage disk.
+func (a *App) EjectDisk(targetDisk string) error {
+	if strings.TrimSpace(targetDisk) == "" {
+		return fmt.Errorf("target disk path cannot be empty")
+	}
+	if len(targetDisk) > 512 {
+		return fmt.Errorf("target disk path too long (max 512 characters)")
+	}
+
+	logger.Info("Requesting explicit user-initiated safe ejection for selected disk", "disk", targetDisk)
+	err := disk.SafeUserEjectDisk(targetDisk)
+	if err != nil {
+		logger.Error("Failed to eject target disk via explicit safety gate", "disk", targetDisk, "error", err)
+		return err
+	}
+	disk.InvalidateDiskCache()
+	logger.Info("Target disk safely ejected after explicit removable-disk validation", "disk", targetDisk)
+	return nil
+}
+
+// DetectHypervisors returns status of all installed virtual machine engines.
+func (a *App) DetectHypervisors() []*hypervisor.VMStatus {
+	return hypervisor.GetManager().DetectAll()
+}
+
+// DetectBestHypervisor returns the highest priority available virtual machine status.
+func (a *App) DetectBestHypervisor() *hypervisor.VMStatus {
+	return hypervisor.GetManager().DetectBest()
+}
+
+// GetDefaultVMConfig returns recommended default VM tuning parameters.
+func (a *App) GetDefaultVMConfig() *hypervisor.VMConfig {
+	return hypervisor.DefaultVMConfig()
+}
+
+// LaunchVM launches a specified or best available virtual machine with boot mode (uefi, bios, auto).
+func (a *App) LaunchVM(targetDisk string, vmType string, bootMode string) error {
+	if strings.TrimSpace(targetDisk) == "" {
+		return fmt.Errorf("target disk path cannot be empty")
+	}
+	if len(targetDisk) > 512 {
+		return fmt.Errorf("target disk path too long")
+	}
+
+	validVMTypes := map[string]bool{
+		"":           true,
+		"auto":       true,
+		"qemu":       true,
+		"utm":        true,
+		"vmware":     true,
+		"virtualbox": true,
+	}
+	vmTypeLower := strings.ToLower(strings.TrimSpace(vmType))
+	if !validVMTypes[vmTypeLower] {
+		return fmt.Errorf("invalid VM type: %s (supported: auto, qemu, utm, vmware, virtualbox)", vmType)
+	}
+
+	validBootModes := map[string]bool{
+		"":     true,
+		"auto": true,
+		"uefi": true,
+		"bios": true,
+	}
+	bootModeLower := strings.ToLower(strings.TrimSpace(bootMode))
+	if !validBootModes[bootModeLower] {
+		return fmt.Errorf("invalid boot mode: %s (supported: auto, uefi, bios)", bootMode)
+	}
+
+	if bootMode == "" {
+		bootMode = hypervisor.BootModeAuto
+	}
+	cfg := hypervisor.VMConfig{
+		CpuCores:     hypervisor.GetRecommendedVCPUs(),
+		MemoryMB:     hypervisor.GetRecommendedVMMemoryMB(),
+		BootMode:     bootMode,
+		DisplayAccel: true,
+		SecureBoot:   false,
+	}
+	return a.LaunchVMWithConfig(targetDisk, vmType, cfg)
+}
+
+// LaunchVMWithConfig launches a virtual machine with custom VMConfig options.
+func (a *App) LaunchVMWithConfig(targetDisk string, vmType string, cfg hypervisor.VMConfig) error {
+	if strings.TrimSpace(targetDisk) == "" {
+		return fmt.Errorf("target disk path cannot be empty")
+	}
+	if len(targetDisk) > 512 {
+		return fmt.Errorf("target disk path too long")
+	}
+	if err := disk.ValidateUserEjectTarget(targetDisk); err != nil {
+		return fmt.Errorf("unsafe VM target disk: %w", err)
+	}
+
+	if cfg.CpuCores < 0 || cfg.CpuCores > 256 {
+		return fmt.Errorf("invalid CPU cores: %d (must be 0-256)", cfg.CpuCores)
+	}
+	if cfg.MemoryMB < 0 || cfg.MemoryMB > 1048576 {
+		return fmt.Errorf("invalid memory: %d MB (must be 0-1048576)", cfg.MemoryMB)
+	}
+
+	if cfg.BootMode == "" {
+		cfg.BootMode = hypervisor.BootModeAuto
+	}
+	if cfg.CpuCores <= 0 {
+		cfg.CpuCores = hypervisor.GetRecommendedVCPUs()
+	}
+	if cfg.MemoryMB <= 0 {
+		cfg.MemoryMB = hypervisor.GetRecommendedVMMemoryMB()
+	}
+
+	var err error
+	if vmType == "" || vmType == "auto" {
+		err = hypervisor.GetManager().LaunchBestConfigured(a.ctx, targetDisk, cfg)
+	} else {
+		logger.Info("Requesting specified hypervisor preview test launch with VMConfig", "disk", targetDisk, "vmType", vmType, "bootMode", cfg.BootMode, "cpu", cfg.CpuCores, "ramMB", cfg.MemoryMB)
+		err = hypervisor.GetManager().LaunchSpecifiedConfigured(a.ctx, targetDisk, hypervisor.HypervisorType(vmType), cfg)
+	}
+	if err != nil {
+		logger.Error("Failed to launch hypervisor with VMConfig", "disk", targetDisk, "vmType", vmType, "error", err)
+		return err
+	}
+	logger.Info("Specified hypervisor test launched successfully with VMConfig", "disk", targetDisk, "vmType", vmType)
+	disk.InvalidateDiskCache()
+	a.emitEvent("disk:hotplug")
+	return nil
+}
+
+// StopVM manually stops any active virtual machine simulation session, remounts target disks, and resets state.
+func (a *App) StopVM() error {
+	logger.Info("User manually requested VM simulation session stop")
+	hypervisor.StopActiveVMSession()
+	hypervisor.GetManager().CleanupAllUnmountedDisks()
+	a.emitEvent("vm:exit", map[string]interface{}{"disk": "", "error": ""})
+	return nil
+}
+
+// IsPrivileged returns true if the app process or worker currently possesses administrator or root privileges.
+func (a *App) IsPrivileged() bool {
+	return privilege.IsElevated()
+}
+
+// RequestPrivilegeElevation prompts the user for administrator privileges across operating systems.
+func (a *App) RequestPrivilegeElevation() (bool, error) {
+	if privilege.IsElevated() {
+		return true, nil
+	}
+
+	prompt := "UniGoDesktop requires administrator privileges to access raw storage devices and system resources."
+	_, err := privilege.StartOrConnectWorker(prompt)
+	if err != nil {
+		if strings.Contains(err.Error(), "canceled") || strings.Contains(err.Error(), "rejected") {
+			logger.Info("User dismissed privilege elevation prompt")
+			return false, nil
+		}
+		logger.Warn("Failed to start privileged worker", "error", err)
+		return false, err
+	}
+
+	privilege.ResetElevationCache()
+	disk.InvalidateDiskCache()
+	logger.Info("Administrator privilege successfully granted by user")
+	return true, nil
+}
+
+// CheckConfigHealth performs an integrity diagnosis on the config file.
+func (a *App) CheckConfigHealth() (*config.ConfigHealth, error) {
+	return config.HealthCheck()
+}
+
+
 

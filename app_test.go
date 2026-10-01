@@ -196,3 +196,52 @@ func TestApp_ContextLifecycle(t *testing.T) {
 	assert.Error(t, app.ctx.Err())
 	assert.Equal(t, context.Canceled, app.ctx.Err())
 }
+
+func TestApp_HardwareAndHypervisorAPIs(t *testing.T) {
+	app := NewApp()
+	require.NotNil(t, app)
+
+	ctx := context.Background()
+	app.startup(ctx)
+	defer app.shutdown(ctx)
+
+	// GetDiskList returns slice without panic
+	disks, err := app.GetDiskList()
+	assert.NoError(t, err)
+	assert.NotNil(t, disks)
+
+	// EjectDisk validation errors
+	assert.Error(t, app.EjectDisk(""))
+	assert.Error(t, app.EjectDisk(string(make([]byte, 513))))
+
+	// Hypervisor detection
+	hvs := app.DetectHypervisors()
+	assert.NotNil(t, hvs)
+
+	best := app.DetectBestHypervisor()
+	assert.NotNil(t, best)
+
+	cfg := app.GetDefaultVMConfig()
+	assert.NotNil(t, cfg)
+	assert.True(t, cfg.CpuCores > 0)
+	assert.True(t, cfg.MemoryMB > 0)
+
+	// VM validation checks
+	assert.Error(t, app.LaunchVM("", "auto", "auto"))
+	assert.Error(t, app.LaunchVM("/dev/invalid_test_disk", "invalid_hypervisor", "auto"))
+	assert.Error(t, app.LaunchVM("/dev/invalid_test_disk", "qemu", "invalid_boot_mode"))
+
+	// StopVM executes cleanly
+	err = app.StopVM()
+	assert.NoError(t, err)
+
+	// IsPrivileged returns boolean
+	_ = app.IsPrivileged()
+
+	// CheckConfigHealth returns diagnostic report
+	report, err := app.CheckConfigHealth()
+	assert.NoError(t, err)
+	assert.NotNil(t, report)
+}
+
+
