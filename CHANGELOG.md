@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.10.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.9.0...v0.10.0) (2026-10-01)
+
+
+### 🚀 Features
+
+* **config:** implement cross-process file locking, atomic backups, cache invalidation, and HealthCheck ([ebfdb8a](https://github.com/snowdreamtech/UniGoDesktop/commit/ebfdb8a28155597cc7df8050ddcfc4aa31bf37ef))
+* **core:** wire storage, hypervisor, privilege, and health-check APIs into app runtime ([b131be7](https://github.com/snowdreamtech/UniGoDesktop/commit/b131be70c0f96e863a4c78b6514a3455433cd338))
+* **disk:** implement cross-platform storage drive enumeration and inspection library ([0486e65](https://github.com/snowdreamtech/UniGoDesktop/commit/0486e65787e1badde46e1933c12a6da12b9fbac0))
+* **gui:** add ProgressBar and IconPickerModal components with 53-language i18n support ([c3fc3f3](https://github.com/snowdreamtech/UniGoDesktop/commit/c3fc3f36a5f940714e66d9cedb1fd7ec2ead5740))
+* **gui:** introduce PrivilegeTrustModal component with comprehensive multi-language support ([2f46850](https://github.com/snowdreamtech/UniGoDesktop/commit/2f46850e009990e7d96a40e682a0309e182d1d7c))
+* **gui:** introduce UsbInspectorModal component with PHY protocol analysis and hardware verification ([64e394e](https://github.com/snowdreamtech/UniGoDesktop/commit/64e394e789b1bdc3546c219f112767c567c55c55))
+* **gui:** modularize AppHeader component with seamless native window dragging and double-click maximize ([44a2ea8](https://github.com/snowdreamtech/UniGoDesktop/commit/44a2ea8812e10a621fde135953119c2417c40631))
+* **hypervisor:** implement cross-platform hypervisor detection and launch engine ([7d0fed9](https://github.com/snowdreamtech/UniGoDesktop/commit/7d0fed94ee2df5c797e890428f3ac8576311e313))
+* **i18n:** enable macOS App bundle localizations to render native file dialogs in Chinese ([c4767fb](https://github.com/snowdreamtech/UniGoDesktop/commit/c4767fb8accad5f2f9b9384197d84266e1007f03))
+* **logger:** implement realtime log bridge, log export APIs, and LogViewerModal component ([c6dd0e7](https://github.com/snowdreamtech/UniGoDesktop/commit/c6dd0e7210a9c8fba896ab315ea461957dd04a33))
+* **menu:** implement localized native application menu and backend i18n support ([c4a00f4](https://github.com/snowdreamtech/UniGoDesktop/commit/c4a00f48a44f8d09ceec943fb57ec9af537eeacc))
+* **privilege:** implement cross-platform privilege escalation and worker IPC mechanism ([13af8fd](https://github.com/snowdreamtech/UniGoDesktop/commit/13af8fdf6a70edf63c70c3905de9b567d71d2a6a))
+* **security:** implement OS-level credential management and secure TOML exclusion ([863dba0](https://github.com/snowdreamtech/UniGoDesktop/commit/863dba0e545d4f992d5cea2f43829a8f3ff3c9dc))
+* **utils:** implement multi-algorithm file checksum engine with streaming and context cancellation ([d119cc9](https://github.com/snowdreamtech/UniGoDesktop/commit/d119cc980a7ba5a8989ad58c4b843b0d896279a9))
+
+
+### 🐛 Bug Fixes
+
+* **app:** use cross-platform noop command in restart tests ([7cee5b8](https://github.com/snowdreamtech/UniGoDesktop/commit/7cee5b8da842931bf8e3727b985f7126aad64acc))
+* **ci:** allocate sufficient virtual volume size for macOS DMG packaging ([82ca24e](https://github.com/snowdreamtech/UniGoDesktop/commit/82ca24ec435095935e839598c8a8c6cd9ebc7027))
+* **disk:** identify genuine Ventoy drives by physical MBR opcodes and partition geometry without relying on volume labels ([d070f94](https://github.com/snowdreamtech/UniGoDesktop/commit/d070f94ce6ec52d59ceefe61704156336bc052d3))
+* **i18n:** resolve TDZ ReferenceError and expand Wails TypeScript declarations ([3f30b14](https://github.com/snowdreamtech/UniGoDesktop/commit/3f30b1430999c5380620744c71e72a1a12079179))
+* **scripts:** prevent exponential quote escaping in update-locales ([2c2aa36](https://github.com/snowdreamtech/UniGoDesktop/commit/2c2aa36e38ef51f2b3a11adf0c8a64aecdfd7af1))
+* **updater:** fallback to per-platform sha256 and strip path prefixes when verifying release checksums ([2b5e926](https://github.com/snowdreamtech/UniGoDesktop/commit/2b5e92649e933b2a34cf1b863eae9a5f95c546d9))
+
+
+### 🛠 Refactoring
+
+* **core:** replace remaining project naming references with UniGoDesktop ([209549b](https://github.com/snowdreamtech/UniGoDesktop/commit/209549bebc6413fe6d27d59a1a9021f77b36d152))
+* **disk:** decouple and purge domain-specific Ventoy/bootloader logic from universal template ([63037c0](https://github.com/snowdreamtech/UniGoDesktop/commit/63037c0156bc7b9f5a237fc8535aa72d881ff127))
+* **frontend:** extract useTheme, useToast, and useAppRuntimeEvents composables ([9d16975](https://github.com/snowdreamtech/UniGoDesktop/commit/9d16975627cead4ff2ab2be0b97b99036653269d))
+* **i18n:** remove uniboot-specific bootloader keys across all 53 locales ([0bc6de8](https://github.com/snowdreamtech/UniGoDesktop/commit/0bc6de8f4efe6d36c2bc8d3f3bcea3e8e2af596c))
+
+
+### ♻️ Miscellaneous Chores
+
+* **deps:** sync dependabot config and unirtm toolchain ([39aa846](https://github.com/snowdreamtech/UniGoDesktop/commit/39aa846e0237c2a50e37bfef94b1a20d93005942))
+
 ## [0.9.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.8.0...v0.9.0) (2026-10-01)
 
 
