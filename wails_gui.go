@@ -111,6 +111,7 @@ func RunWails() error {
 			Assets: assets,
 		},
 		BackgroundColour: backgroundColour,
+		Menu:             BuildAppMenu(app, "auto"),
 		OnStartup:        app.startup,
 		OnDomReady: func(ctx context.Context) {
 			time.AfterFunc(50*time.Millisecond, func() {
