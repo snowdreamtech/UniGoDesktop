@@ -318,30 +318,55 @@ body,
     border-color 0.25s ease;
 }
 
-/* Bidirectional (LTR / RTL) Layout & Alignment */
+/* LTR / RTL explicit Direction Controls */
+html[dir="ltr"],
+[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+html[dir="ltr"] input,
+html[dir="ltr"] select,
+html[dir="ltr"] textarea {
+  text-align: left;
+}
+html[dir="ltr"] .header-brand,
+html[dir="ltr"] .section-header-row,
+html[dir="ltr"] .modal-header,
+html[dir="ltr"] .sync-status,
+html[dir="ltr"] .tab-group,
+html[dir="ltr"] .protocol-radio-bar,
+html[dir="ltr"] .radio-group {
+  flex-direction: row;
+}
+html[dir="ltr"] .dropdown-caret,
+html[dir="ltr"] .opt-check {
+  margin-left: auto;
+  margin-right: 0;
+}
+
 html[dir="rtl"],
 [dir="rtl"] {
   direction: rtl;
   text-align: right;
 }
-
-html[dir="ltr"],
-[dir="ltr"],
-html:not([dir="rtl"]) {
-  direction: ltr;
-  text-align: left;
-}
-
 html[dir="rtl"] input,
 html[dir="rtl"] select,
 html[dir="rtl"] textarea {
   text-align: right;
 }
-
-html[dir="ltr"] input,
-html[dir="ltr"] select,
-html[dir="ltr"] textarea {
-  text-align: left;
+html[dir="rtl"] .header-brand,
+html[dir="rtl"] .section-header-row,
+html[dir="rtl"] .modal-header,
+html[dir="rtl"] .sync-status,
+html[dir="rtl"] .tab-group,
+html[dir="rtl"] .protocol-radio-bar,
+html[dir="rtl"] .radio-group {
+  flex-direction: row-reverse;
+}
+html[dir="rtl"] .dropdown-caret,
+html[dir="rtl"] .opt-check {
+  margin-left: 0;
+  margin-right: auto;
 }
 
 /* Header dropdown menu anchoring in RTL */
@@ -375,3 +400,4 @@ html[dir="ltr"] textarea {
 .window-inactive .logo-img {
   filter: grayscale(0.2) opacity(0.88);
 }
+
