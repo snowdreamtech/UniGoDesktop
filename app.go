@@ -25,6 +25,7 @@ import (
 	"github.com/snowdreamtech/unigodesktop/pkg/hypervisor"
 	"github.com/snowdreamtech/unigodesktop/pkg/privilege"
 	"github.com/snowdreamtech/unigodesktop/pkg/updater"
+	"github.com/snowdreamtech/unigodesktop/pkg/utils"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -582,6 +583,16 @@ func (a *App) RequestPrivilegeElevation() (bool, error) {
 func (a *App) CheckConfigHealth() (*config.ConfigHealth, error) {
 	return config.HealthCheck()
 }
+
+// CalculateFileChecksum calculates the hash (sha256, md5, sha1, crc32, etc.) of a local file.
+func (a *App) CalculateFileChecksum(filePath string, algo string) (*utils.ChecksumResult, error) {
+	ctx := a.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return utils.CalculateFileChecksum(ctx, filePath, algo)
+}
+
 
 
 

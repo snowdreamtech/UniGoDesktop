@@ -242,6 +242,15 @@ func TestApp_HardwareAndHypervisorAPIs(t *testing.T) {
 	report, err := app.CheckConfigHealth()
 	assert.NoError(t, err)
 	assert.NotNil(t, report)
+
+	// CalculateFileChecksum
+	tmpFile := filepath.Join(t.TempDir(), "test_hash.txt")
+	require.NoError(t, os.WriteFile(tmpFile, []byte("Hello UniGoDesktop"), 0644))
+	res, err := app.CalculateFileChecksum(tmpFile, "sha256")
+	assert.NoError(t, err)
+	assert.NotNil(t, res)
+	assert.NotEmpty(t, res.Hash)
 }
+
 
 

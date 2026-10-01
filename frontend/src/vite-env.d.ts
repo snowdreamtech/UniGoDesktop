@@ -44,6 +44,7 @@ declare global {
           IsPrivileged?(): Promise<boolean>;
           RequestPrivilegeElevation?(): Promise<boolean>;
           CheckConfigHealth?(): Promise<any>;
+          CalculateFileChecksum?(filePath: string, algo?: string): Promise<any>;
         };
       };
     };
