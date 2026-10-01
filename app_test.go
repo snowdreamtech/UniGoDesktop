@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/snowdreamtech/unigodesktop/internal/env"
@@ -22,6 +23,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func mockNoopCommand() *exec.Cmd {
+	if runtime.GOOS == "windows" {
+		return exec.Command("cmd.exe", "/c", "exit 0")
+	}
+	return exec.Command("true")
+}
 
 func TestApp_LifecycleAndAPIs(t *testing.T) {
 	app := NewApp()
@@ -68,8 +76,8 @@ func TestApp_RestartApp(t *testing.T) {
 	defer func() { execCommand = origExec }()
 
 	execCommand = func(name string, arg ...string) *exec.Cmd {
-		// Use echo or true which exits immediately
-		return exec.Command("true")
+		// Use cross-platform command that exits immediately
+		return mockNoopCommand()
 	}
 
 	err := app.RestartApp()
@@ -84,12 +92,20 @@ func TestApp_RestartApp_WithPendingUpdate(t *testing.T) {
 	defer func() { execCommand = origExec }()
 
 	tmpDir := t.TempDir()
-	scriptPath := filepath.Join(tmpDir, "apply_update.sh")
-	require.NoError(t, os.WriteFile(scriptPath, []byte("#!/bin/sh\nexit 0\n"), 0755))
+	scriptName := "apply_update.sh"
+	scriptContent := "#!/bin/sh\nexit 0\n"
+	shellCmd := "/bin/sh"
+	if runtime.GOOS == "windows" {
+		scriptName = "apply_update.bat"
+		scriptContent = "@echo off\r\nexit 0\r\n"
+		shellCmd = "cmd.exe"
+	}
+	scriptPath := filepath.Join(tmpDir, scriptName)
+	require.NoError(t, os.WriteFile(scriptPath, []byte(scriptContent), 0o755))
 
 	dataDir := env.GetDataDir()
 	pending := &updater.PendingUpdate{
-		Shell:      "/bin/sh",
+		Shell:      shellCmd,
 		ScriptPath: scriptPath,
 		Target:     filepath.Join(tmpDir, "target"),
 		Staged:     filepath.Join(tmpDir, "staged"),
@@ -100,7 +116,7 @@ func TestApp_RestartApp_WithPendingUpdate(t *testing.T) {
 	var executedCmd string
 	execCommand = func(name string, arg ...string) *exec.Cmd {
 		executedCmd = name
-		return exec.Command("true")
+		return mockNoopCommand()
 	}
 
 	err := app.RestartApp()
