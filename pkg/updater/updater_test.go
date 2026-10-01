@@ -488,3 +488,81 @@ func TestPerformGuiUpdate_IntegrityVerificationFailure(t *testing.T) {
 		t.Errorf("expected verifying_checksum stage in stages: %v", stages)
 	}
 }
+
+func TestParseHashFromChecksumContent(t *testing.T) {
+	sampleContent := `# Checksums for release
+ade7a59f8b76defd6e81c1477b783495d12ed19c1dbb74d98982f2e28fa7974d  unigodesktop-cli_darwin_amd64.tar.gz
+b87c771f81023fded209b829e6c121acf2fd568dcc0641fbe6a369cc6d5eadc8  build/bin/unigodesktop-gui_darwin_universal.dmg
+1111111111111111111111111111111111111111111111111111111111111111 *build/bin/unigodesktop-gui_windows_amd64.exe
+`
+
+	// Test standard path match
+	h1 := ParseHashFromChecksumContent(sampleContent, "unigodesktop-cli_darwin_amd64.tar.gz")
+	if h1 != "ade7a59f8b76defd6e81c1477b783495d12ed19c1dbb74d98982f2e28fa7974d" {
+		t.Errorf("expected h1 match, got: %s", h1)
+	}
+
+	// Test prefix strip match (build/bin/)
+	h2 := ParseHashFromChecksumContent(sampleContent, "unigodesktop-gui_darwin_universal.dmg")
+	if h2 != "b87c771f81023fded209b829e6c121acf2fd568dcc0641fbe6a369cc6d5eadc8" {
+		t.Errorf("expected h2 match, got: %s", h2)
+	}
+
+	// Test asterisk strip match (*build/bin/)
+	h3 := ParseHashFromChecksumContent(sampleContent, "unigodesktop-gui_windows_amd64.exe")
+	if h3 != "1111111111111111111111111111111111111111111111111111111111111111" {
+		t.Errorf("expected h3 match, got: %s", h3)
+	}
+
+	// Test single raw hash
+	hRaw := ParseHashFromChecksumContent("b87c771f81023fded209b829e6c121acf2fd568dcc0641fbe6a369cc6d5eadc8\n", "any_file.dmg")
+	if hRaw != "b87c771f81023fded209b829e6c121acf2fd568dcc0641fbe6a369cc6d5eadc8" {
+		t.Errorf("expected hRaw match, got: %s", hRaw)
+	}
+
+	// Test not found
+	hNotFound := ParseHashFromChecksumContent(sampleContent, "non_existent.dmg")
+	if hNotFound != "" {
+		t.Errorf("expected empty string for non-existent file, got: %s", hNotFound)
+	}
+}
+
+func TestResolveExpectedChecksum_FallbackToPlatformSha256(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "checksums.txt") {
+			// checksums.txt only contains CLI files
+			_, _ = w.Write([]byte("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  unigodesktop-cli.tar.gz\n"))
+			return
+		}
+		if strings.HasSuffix(r.URL.Path, "unigodesktop-gui_darwin_universal.sha256") {
+			_, _ = w.Write([]byte("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb  build/bin/unigodesktop-gui_darwin_universal.dmg\n"))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer ts.Close()
+
+	targetAsset := updater.ReleaseAsset{
+		Name: "unigodesktop-gui_darwin_universal.dmg",
+	}
+
+	allAssets := []updater.ReleaseAsset{
+		{
+			Name:               "checksums.txt",
+			BrowserDownloadURL: ts.URL + "/download/checksums.txt",
+		},
+		{
+			Name:               "unigodesktop-gui_darwin_universal.sha256",
+			BrowserDownloadURL: ts.URL + "/download/unigodesktop-gui_darwin_universal.sha256",
+		},
+	}
+
+	tmpDir := t.TempDir()
+	hash, source := ResolveExpectedChecksum(context.Background(), targetAsset, allAssets, tmpDir, "")
+	if hash != "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" {
+		t.Errorf("expected fallback to platform sha256, got hash: %s", hash)
+	}
+	if source != "unigodesktop-gui_darwin_universal.sha256" {
+		t.Errorf("expected source to be platform sha256 asset, got: %s", source)
+	}
+}
