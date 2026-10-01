@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.9.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.8.0...v0.9.0) (2026-10-01)
+
+
+### 🚀 Features
+
+* **dev:** implement dynamic smart port resolution and remove process kill commands ([90309dd](https://github.com/snowdreamtech/UniGoDesktop/commit/90309dd53ce1ba0874363d9208583e4289524a35))
+* **gui:** enable seamless window dragging on empty background and whitespace areas ([7a17191](https://github.com/snowdreamtech/UniGoDesktop/commit/7a171918a612efb0c230615b83c182675151cd85))
+* **gui:** synchronize smooth startup loading mechanism from UniBootDesktop ([14a87cf](https://github.com/snowdreamtech/UniGoDesktop/commit/14a87cf78687a409b67eb5362f816fb98b5b3f3b))
+
+
+### 🐛 Bug Fixes
+
+* **deps:** bump dompurify to 3.4.16 in docs to address GHSA-p98j-92pf-mc4p ([43e08db](https://github.com/snowdreamtech/UniGoDesktop/commit/43e08db9681ec1ca7529a0c19acf4bae3da91538))
+* **dev:** isolate wails devServer port and allow adaptive vite port ([a2a1dd5](https://github.com/snowdreamtech/UniGoDesktop/commit/a2a1dd5f0bd59b9698591bbee559914a8ade11f7))
+* **ui:** prevent scrollbar drag from moving window ([ce86e95](https://github.com/snowdreamtech/UniGoDesktop/commit/ce86e95db4171d08b7871d619b400994bcc59f0f))
+
 ## [0.8.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.7.0...v0.8.0) (2026-09-30)
 
 
