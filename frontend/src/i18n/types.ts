@@ -190,6 +190,23 @@ export interface TranslationDict {
   "inspector.lbl_serial": string;
   "inspector.ext_protocols": string;
   "inspector.close": string;
+
+  "icon_picker.title": string;
+  "icon_picker.reset": string;
+  "icon_picker.subtitle": string;
+  "icon_picker.usb_desc": string;
+  "icon_picker.usb2_desc": string;
+  "icon_picker.usb3_1_desc": string;
+  "icon_picker.usb3_2_desc": string;
+  "icon_picker.usb4_desc": string;
+  "icon_picker.boot_desc": string;
+  "icon_picker.ssd_desc": string;
+  "icon_picker.typec_desc": string;
+  "icon_picker.secure_desc": string;
+  "icon_picker.reader_desc": string;
+  "icon_picker.hdd_desc": string;
+  "icon_picker.key_desc": string;
 }
+
 
 

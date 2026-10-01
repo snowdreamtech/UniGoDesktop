@@ -195,6 +195,23 @@ export const zhCn: TranslationDict = {
   "inspector.lbl_serial": "物理序列号",
   "inspector.ext_protocols": "扩展协议标准",
   "inspector.close": "关闭",
+
+  "icon_picker.title": "自定义磁盘外观图标",
+  "icon_picker.reset": "重置为默认图标",
+  "icon_picker.subtitle": "为目标磁盘 {name} 选择个性化图标：",
+  "icon_picker.usb_desc": "经典 SuperSpeed 5 Gbps 磁盘",
+  "icon_picker.usb2_desc": "经典 High-Speed 480 Mbps 磁盘",
+  "icon_picker.usb3_1_desc": "SuperSpeed+ 10 Gbps 高速磁盘",
+  "icon_picker.usb3_2_desc": "Gen 2x2 20 Gbps 双通道极速磁盘",
+  "icon_picker.usb4_desc": "旗舰 40 Gbps USB4/雷电 极速磁盘",
+  "icon_picker.boot_desc": "带闪电标识的专业系统启动盘",
+  "icon_picker.ssd_desc": "便携式移动固态硬盘 (PSSD)",
+  "icon_picker.typec_desc": "手机/电脑双接口 Type-C 磁盘",
+  "icon_picker.secure_desc": "带物理按键的按键加密硬件盘",
+  "icon_picker.reader_desc": "SD / MicroSD 高速读卡器",
+  "icon_picker.hdd_desc": "2.5 英寸移动机械硬盘",
+  "icon_picker.key_desc": "FIDO2 硬件安全 Key 密钥",
 };
+
 
 
