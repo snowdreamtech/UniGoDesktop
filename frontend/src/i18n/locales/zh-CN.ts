@@ -116,4 +116,20 @@ export const zhCn: TranslationDict = {
   "about.stagingPackage": "正在准备更新文件...",
   "about.preparingApplyScript": "正在准备更新替换脚本...",
   "about.verifyingChecksum": "正在校验更新包完整性...",
+
+  "privilege.status_elevated": "已授权",
+  "privilege.status_standard": "未授权",
+  "privilege.btn_elevate": "请求管理员权限",
+  "privilege.modal_title": "需要管理员权限",
+  "privilege.modal_subtitle": "执行特权操作需要系统管理员授权",
+  "privilege.reason_title": "为什么需要管理员权限？",
+  "privilege.reason_desc": "操作系统对直接硬件访问、底层存储设备与低级系统配置有保护限制，授权后即可正常操作。",
+  "privilege.scope_title": "权限范围",
+  "privilege.scope_desc": "严格限定于当前请求的操作范围，绝不触碰任何系统未授权的数据。",
+  "privilege.safety_title": "安全承诺",
+  "privilege.safety_desc": "严格遵循最小权限原则与安全性只读检测，代码完全开源。",
+  "privilege.confirm_btn": "立即授权",
+  "privilege.cancel_btn": "暂不授权",
+  "privilege.success_msg": "已获得管理员权限",
 };
+

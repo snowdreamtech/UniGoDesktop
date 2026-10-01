@@ -111,4 +111,20 @@ export interface TranslationDict {
   "about.stagingPackage": string;
   "about.preparingApplyScript": string;
   "about.verifyingChecksum": string;
+
+  "privilege.status_elevated": string;
+  "privilege.status_standard": string;
+  "privilege.btn_elevate": string;
+  "privilege.modal_title": string;
+  "privilege.modal_subtitle": string;
+  "privilege.reason_title": string;
+  "privilege.reason_desc": string;
+  "privilege.scope_title": string;
+  "privilege.scope_desc": string;
+  "privilege.safety_title": string;
+  "privilege.safety_desc": string;
+  "privilege.confirm_btn": string;
+  "privilege.cancel_btn": string;
+  "privilege.success_msg": string;
 }
+
