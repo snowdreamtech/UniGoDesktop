@@ -69,3 +69,39 @@ func TestConfigSaveAndLoad(t *testing.T) {
 		t.Errorf("proxy config mismatch: %+v", loaded)
 	}
 }
+
+func TestConfigHealthAndCorruptRecovery(t *testing.T) {
+	tmpDir := t.TempDir()
+	t.Setenv("UNIGODESKTOP_CONFIG_DIR", tmpDir)
+	t.Setenv("UNIGO_DATA_DIR", tmpDir)
+	InvalidateConfigCache()
+
+	// Initial health check on non-existent config
+	health, err := HealthCheck()
+	if err != nil {
+		t.Fatalf("HealthCheck failed: %v", err)
+	}
+	if health.Exists {
+		t.Errorf("expected config not to exist initially")
+	}
+
+	cfg := GetDefaultConfig()
+	cfg.Theme = "dark"
+	if err := cfg.Save(); err != nil {
+		t.Fatalf("Save config failed: %v", err)
+	}
+
+	// Verify health check on valid config
+	health, err = HealthCheck()
+	if err != nil || !health.Exists || !health.Valid {
+		t.Fatalf("expected valid existing config, got: %+v, err: %v", health, err)
+	}
+
+	// Invalidate cache and test reload
+	InvalidateConfigCache()
+	loaded, err := Load()
+	if err != nil || loaded.Theme != "dark" {
+		t.Fatalf("expected loaded Theme 'dark', got %v, err: %v", loaded, err)
+	}
+}
+
