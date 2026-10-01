@@ -89,18 +89,17 @@ import AboutModal from "./components/AboutModal.vue";
 import ToastNotification from "./components/ToastNotification.vue";
 import { t, currentLang, selectedLangSetting, setLanguage, SUPPORTED_LANGUAGES } from "./i18n";
 import { GetConfig, SaveConfig, CheckUpdate } from "../wailsjs/go/main/App";
-import {
-  WindowSetDarkTheme,
-  WindowSetLightTheme,
-  WindowSetSystemDefaultTheme,
-  WindowSetBackgroundColour,
-  WindowToggleMaximise,
-  WindowShow,
-} from "../wailsjs/runtime/runtime";
+import { WindowToggleMaximise, WindowShow } from "../wailsjs/runtime/runtime";
 import { isWails, isWailsRuntime } from "./utils/wails";
+import { useTheme } from "./composables/useTheme";
+import { useToast } from "./composables/useToast";
+import { useAppRuntimeEvents } from "./composables/useAppRuntimeEvents";
 import type { config } from "../wailsjs/go/models";
 
 type AppConfigType = config.AppConfig;
+
+const { currentTheme, isDarkTheme, applyTheme, toggleTheme: baseToggleTheme } = useTheme();
+const { toastMessage, toastType, showToast } = useToast();
 
 function handleHeaderDblClick(e: MouseEvent) {
   const target = e.target as HTMLElement | null;
@@ -131,13 +130,6 @@ const appConfig = ref<AppConfigType | null>(null);
 const isLangMenuOpen = ref(false);
 const langDropdownRef = ref<HTMLElement | null>(null);
 
-const toastMessage = ref("");
-const toastType = ref<"info" | "success" | "warning" | "error">("info");
-let toastTimer: any = null;
-
-const currentTheme = ref("dark");
-const isDarkTheme = computed(() => currentTheme.value !== "light");
-
 const langOptions = computed(() => [
   { value: "auto", label: "🌐 " + (t("common.autoDetect") || "Auto Detect") },
   ...SUPPORTED_LANGUAGES.map((item) => ({
@@ -154,15 +146,6 @@ const currentLangLabel = computed(() => {
   return opt ? opt.label : "Language";
 });
 
-function showToast(msg: string, type: "info" | "success" | "warning" | "error" = "info") {
-  toastMessage.value = msg;
-  toastType.value = type;
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toastMessage.value = "";
-  }, 4000);
-}
-
 function toggleLangMenu() {
   isLangMenuOpen.value = !isLangMenuOpen.value;
 }
@@ -177,42 +160,10 @@ function selectLanguage(langVal: string) {
 }
 
 function toggleTheme() {
-  const nextTheme = currentTheme.value === "light" ? "dark" : "light";
-  applyTheme(nextTheme);
+  const nextTheme = baseToggleTheme();
   if (appConfig.value) {
     appConfig.value.theme = nextTheme;
     saveConfigToBackend(appConfig.value);
-  }
-}
-
-function applyTheme(themeName: string) {
-  currentTheme.value = themeName;
-  let applied = themeName;
-  if (themeName === "system") {
-    const isDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    applied = isDark ? "dark" : "light";
-  }
-  document.documentElement.setAttribute("data-theme", applied);
-  try {
-    localStorage.setItem("unigo_theme_cache", themeName);
-  } catch (e) {
-    // localStorage may be unavailable
-  }
-
-  if (isWailsRuntime()) {
-    try {
-      if (themeName === "system") {
-        WindowSetSystemDefaultTheme();
-      } else if (applied === "dark") {
-        WindowSetDarkTheme();
-        WindowSetBackgroundColour(7, 10, 18, 255);
-      } else {
-        WindowSetLightTheme();
-        WindowSetBackgroundColour(241, 245, 249, 255);
-      }
-    } catch (e) {
-      console.warn("Failed to synchronize window theme:", e);
-    }
   }
 }
 
@@ -223,6 +174,12 @@ function openSettings() {
 function openAbout() {
   isAboutOpen.value = true;
 }
+
+useAppRuntimeEvents({
+  openAbout,
+  openSettings,
+  onThemeChanged: (theme) => applyTheme(theme),
+});
 
 function onSaveSettings(savedCfg: any) {
   appConfig.value = { ...(appConfig.value || {}), ...savedCfg } as any;
