@@ -32,7 +32,9 @@ function getInitialTheme(): string {
 const currentTheme = ref<string>(getInitialTheme());
 const isDarkTheme = computed(() => {
   if (currentTheme.value === "system") {
-    return typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return (
+      typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+    );
   }
   return currentTheme.value !== "light";
 });
@@ -42,7 +44,8 @@ export function useTheme() {
     currentTheme.value = themeName;
     let applied = themeName;
     if (themeName === "system") {
-      const isDark = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isDark =
+        typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
       applied = isDark ? "dark" : "light";
     }
     if (typeof document !== "undefined") {

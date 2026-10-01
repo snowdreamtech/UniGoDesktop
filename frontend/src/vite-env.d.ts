@@ -32,7 +32,13 @@ declare global {
           GetRecentLogs?(): Promise<any>;
           ClearLogs?(): Promise<void>;
           LogAction?(level: string, message: string, details: string): Promise<void>;
-          ExportLogs?(content: string, title: string, logFilter: string, textFilter: string, allFilter: string): Promise<string>;
+          ExportLogs?(
+            content: string,
+            title: string,
+            logFilter: string,
+            textFilter: string,
+            allFilter: string
+          ): Promise<string>;
           GetDiskList?(): Promise<any>;
           EjectDisk?(targetDisk: string): Promise<void>;
           DetectHypervisors?(): Promise<any>;

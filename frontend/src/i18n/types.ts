@@ -207,6 +207,3 @@ export interface TranslationDict {
   "icon_picker.hdd_desc": string;
   "icon_picker.key_desc": string;
 }
-
-
-

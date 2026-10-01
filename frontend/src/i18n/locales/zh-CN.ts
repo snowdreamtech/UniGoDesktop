@@ -145,7 +145,8 @@ export const zhCn: TranslationDict = {
   "inspector.smart": "SMART 健康度:",
   "inspector.sector": "扇区大小:",
   "inspector.fake_title": "检测到假冒 USB 3.0 预警！",
-  "inspector.fake_desc": "设备外表标注 USB 3.0/3.1，但物理 PHY 层实际协商速率仅 {speed} (属于 USB 2.0 高速协议)。该盘极可能存在虚标固件或假蓝色接口。",
+  "inspector.fake_desc":
+    "设备外表标注 USB 3.0/3.1，但物理 PHY 层实际协商速率仅 {speed} (属于 USB 2.0 高速协议)。该盘极可能存在虚标固件或假蓝色接口。",
   "inspector.genuine_title": "物理硬件校验通过 (真 USB 3.0+ 高速设备)",
   "inspector.genuine_desc": "物理 PHY 层握手协商为真实 SuperSpeed/SuperSpeed+ 链路，实测速率达 {speed}。",
   "inspector.usb2_title": "标准 USB 2.0 接口",
@@ -212,6 +213,3 @@ export const zhCn: TranslationDict = {
   "icon_picker.hdd_desc": "2.5 英寸移动机械硬盘",
   "icon_picker.key_desc": "FIDO2 硬件安全 Key 密钥",
 };
-
-
-

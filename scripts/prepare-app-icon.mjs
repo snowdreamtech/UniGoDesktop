@@ -34,4 +34,3 @@ try {
 } catch {
   // Ignore if dev bundle does not exist yet
 }
-

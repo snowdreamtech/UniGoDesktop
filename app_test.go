@@ -254,6 +254,3 @@ func TestApp_HardwareAndHypervisorAPIs(t *testing.T) {
 	assert.NotNil(t, res)
 	assert.NotEmpty(t, res.Hash)
 }
-
-
-

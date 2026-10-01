@@ -5,7 +5,8 @@ export const itIt: TranslationDict = {
   "app.subtitle": "Modello per applicazioni desktop multipiattaforma (Go + Wails + Vue 3 + TypeScript)",
   "app.greeting": "Saluti da UniGoDesktop!",
   "app.template_badge": "Modello desktop Go + Wails + Vue 3 + TypeScript",
-  "app.template_desc": "Un modello di applicazione desktop moderno, robusto ed estensibile con i18n, temi e accelerazione di rete.",
+  "app.template_desc":
+    "Un modello di applicazione desktop moderno, robusto ed estensibile con i18n, temi e accelerazione di rete.",
   "common.autoDetect": "Rilevamento automatico",
   "common.langAuto": "Automatico",
   "common.lang": "Lingua",
@@ -53,7 +54,8 @@ export const itIt: TranslationDict = {
   "settings.update_manual_desc": "Controlla gli aggiornamenti solo cliccando manualmente nella finestra Informazioni",
   "settings.tray_section": "Vassoio di sistema e comportamento finestra",
   "settings.enable_tray": "Abilita icona nel vassoio di sistema",
-  "settings.enable_tray_desc": "Mantieni l'icona nel vassoio / barra dei menu (disabilitato per impostazione predefinita)",
+  "settings.enable_tray_desc":
+    "Mantieni l'icona nel vassoio / barra dei menu (disabilitato per impostazione predefinita)",
   "settings.close_action": "Alla chiusura della finestra:",
   "settings.close_action_quit": "Esci dall'applicazione",
   "settings.close_action_minimize": "Riduci a icona nel vassoio di sistema",
@@ -122,11 +124,14 @@ export const itIt: TranslationDict = {
   "privilege.modal_title": "Administrator Permission Required",
   "privilege.modal_subtitle": "System authorization is required to perform privileged actions",
   "privilege.reason_title": "Why is Administrator Privilege Required?",
-  "privilege.reason_desc": "Operating systems restrict direct hardware, raw storage, and low-level system configuration access. Authorization grants secure scoped access.",
+  "privilege.reason_desc":
+    "Operating systems restrict direct hardware, raw storage, and low-level system configuration access. Authorization grants secure scoped access.",
   "privilege.scope_title": "Scope of Access",
-  "privilege.scope_desc": "Restricted strictly to the requested operation. Internal and system data are kept untouched and protected.",
+  "privilege.scope_desc":
+    "Restricted strictly to the requested operation. Internal and system data are kept untouched and protected.",
   "privilege.safety_title": "Safety & Transparency",
-  "privilege.safety_desc": "Actions follow principle of least privilege, non-destructive safety checks, and fully open-source implementation.",
+  "privilege.safety_desc":
+    "Actions follow principle of least privilege, non-destructive safety checks, and fully open-source implementation.",
   "privilege.confirm_btn": "Authorize Now",
   "privilege.cancel_btn": "Cancel",
   "privilege.success_msg": "Administrator privilege granted",
@@ -142,7 +147,8 @@ export const itIt: TranslationDict = {
   "inspector.smart": "SMART Health:",
   "inspector.sector": "Sector Size:",
   "inspector.fake_title": "Fake USB 3.0 Warning Alert!",
-  "inspector.fake_desc": "Device advertises USB 3.0/3.1, but actual physical layer speed is negotiated at only {speed} (USB 2.0 High-Speed PHY). This drive likely has spoofed firmware or a fake blue port.",
+  "inspector.fake_desc":
+    "Device advertises USB 3.0/3.1, but actual physical layer speed is negotiated at only {speed} (USB 2.0 High-Speed PHY). This drive likely has spoofed firmware or a fake blue port.",
   "inspector.genuine_title": "Physical Hardware Verification Passed (Genuine USB 3.0+ Device)",
   "inspector.genuine_desc": "Physical PHY link negotiated genuine SuperSpeed/SuperSpeed+ rate at {speed}.",
   "inspector.usb2_title": "Standard USB 2.0 Interface",
@@ -205,6 +211,6 @@ export const itIt: TranslationDict = {
   "icon_picker.typec_desc": "Dual Type-C Drive for Phone & Mac",
   "icon_picker.secure_desc": "Encrypted Hardware with Physical Keypad",
   "icon_picker.reader_desc": "SD / MicroSD Card Reader",
-  "icon_picker.hdd_desc": "2.5\" Portable Mechanical Hard Drive",
+  "icon_picker.hdd_desc": '2.5" Portable Mechanical Hard Drive',
   "icon_picker.key_desc": "FIDO2 Security Key Hardware",
 };

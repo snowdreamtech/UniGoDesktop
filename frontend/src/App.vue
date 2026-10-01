@@ -196,11 +196,13 @@ onMounted(() => {
 
   const w = window as any;
   if (w.go && w.go.main && w.go.main.App && typeof w.go.main.App.GetRecentLogs === "function") {
-    w.go.main.App.GetRecentLogs().then((logs: any[]) => {
-      if (Array.isArray(logs)) {
-        runtimeLogs.value = logs;
-      }
-    }).catch(() => {});
+    w.go.main.App.GetRecentLogs()
+      .then((logs: any[]) => {
+        if (Array.isArray(logs)) {
+          runtimeLogs.value = logs;
+        }
+      })
+      .catch(() => {});
   }
 
   if (isWailsRuntime() && window.runtime && typeof window.runtime.EventsOn === "function") {

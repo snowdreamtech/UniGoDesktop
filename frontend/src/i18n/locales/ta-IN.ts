@@ -5,7 +5,8 @@ export const taIn: TranslationDict = {
   "app.subtitle": "குறுக்கு-தள டெஸ்க்டாப் பயன்பாட்டு டெம்ப்ளேட் (Go + Wails + Vue 3 + TypeScript)",
   "app.greeting": "UniGoDesktop-லிருந்து வாழ்த்துகள்!",
   "app.template_badge": "Go + Wails + Vue 3 + TypeScript டெஸ்க்டாப் டெம்ப்ளேட்",
-  "app.template_desc": "சர்வதேசமயமாக்கல், தீம்கள் மற்றும் நெட்வொர்க் முடுக்கம் கொண்ட நவீன, வலுவான மற்றும் விரிவாக்கக்கூடிய குறுக்கு-தள டெஸ்க்டாப் பயன்பாட்டு டெம்ப்ளேட்.",
+  "app.template_desc":
+    "சர்வதேசமயமாக்கல், தீம்கள் மற்றும் நெட்வொர்க் முடுக்கம் கொண்ட நவீன, வலுவான மற்றும் விரிவாக்கக்கூடிய குறுக்கு-தள டெஸ்க்டாப் பயன்பாட்டு டெம்ப்ளேட்.",
   "common.autoDetect": "தானியங்கு கண்டறிதல்",
   "common.langAuto": "தானியங்கு",
   "common.lang": "மொழி",
@@ -50,7 +51,8 @@ export const taIn: TranslationDict = {
   "settings.update_auto": "தொடக்கத்தில் புதுப்பிப்புகளைத் தானாகச் சரிபார்க்கவும்",
   "settings.update_auto_desc": "துவக்கத்தின் போது பின்னணியில் புதிய GitHub வெளியீடுகளை அமைதியாகச் சரிபார்க்கவும்",
   "settings.update_manual": "கைமுறை சரிபார்ப்பு மட்டுமே",
-  "settings.update_manual_desc": "பற்றி உரையாடலில் கைமுறையாகக் கிளிக் செய்யும் போது மட்டுமே புதுப்பிப்புகளைச் சரிபார்க்கவும்",
+  "settings.update_manual_desc":
+    "பற்றி உரையாடலில் கைமுறையாகக் கிளிக் செய்யும் போது மட்டுமே புதுப்பிப்புகளைச் சரிபார்க்கவும்",
   "settings.tray_section": "கணினி தட்டு மற்றும் சாளர நடத்தை",
   "settings.enable_tray": "கணினி தட்டை இயக்கு",
   "settings.enable_tray_desc": "கணினி தட்டு / மெனு பட்டியில் ஐகானை வைத்திருக்கவும் (இயல்பாக முடக்கப்பட்டது)",
@@ -58,7 +60,8 @@ export const taIn: TranslationDict = {
   "settings.close_action_quit": "பயன்பாட்டிலிருந்து வெளியேறு",
   "settings.close_action_minimize": "கணினி தட்டுக்குச் சுருக்கு",
   "settings.github_proxy_title": "GitHub கிளவுட் மிரர் & வேக முடுக்கம்",
-  "settings.github_proxy_desc": "பதிவிறக்கங்களுக்கு விருப்பத்தேர்வு மிரர் முகவரியை உள்ளிடவும், அல்லது நேரடி இணைப்பிற்கு காலியாக விடவும்.",
+  "settings.github_proxy_desc":
+    "பதிவிறக்கங்களுக்கு விருப்பத்தேர்வு மிரர் முகவரியை உள்ளிடவும், அல்லது நேரடி இணைப்பிற்கு காலியாக விடவும்.",
   "settings.github_proxy": "மிரர் முன்னொட்டு",
   "settings.githubProxy": "GitHub மிரர்",
   "settings.proxy_placeholder": "இயல்புநிலை காலியாக உள்ளது (நேரடி இணைப்பு). எ.கா: https://proxy.example.com/",
@@ -122,11 +125,14 @@ export const taIn: TranslationDict = {
   "privilege.modal_title": "Administrator Permission Required",
   "privilege.modal_subtitle": "System authorization is required to perform privileged actions",
   "privilege.reason_title": "Why is Administrator Privilege Required?",
-  "privilege.reason_desc": "Operating systems restrict direct hardware, raw storage, and low-level system configuration access. Authorization grants secure scoped access.",
+  "privilege.reason_desc":
+    "Operating systems restrict direct hardware, raw storage, and low-level system configuration access. Authorization grants secure scoped access.",
   "privilege.scope_title": "Scope of Access",
-  "privilege.scope_desc": "Restricted strictly to the requested operation. Internal and system data are kept untouched and protected.",
+  "privilege.scope_desc":
+    "Restricted strictly to the requested operation. Internal and system data are kept untouched and protected.",
   "privilege.safety_title": "Safety & Transparency",
-  "privilege.safety_desc": "Actions follow principle of least privilege, non-destructive safety checks, and fully open-source implementation.",
+  "privilege.safety_desc":
+    "Actions follow principle of least privilege, non-destructive safety checks, and fully open-source implementation.",
   "privilege.confirm_btn": "Authorize Now",
   "privilege.cancel_btn": "Cancel",
   "privilege.success_msg": "Administrator privilege granted",
@@ -142,7 +148,8 @@ export const taIn: TranslationDict = {
   "inspector.smart": "SMART Health:",
   "inspector.sector": "Sector Size:",
   "inspector.fake_title": "Fake USB 3.0 Warning Alert!",
-  "inspector.fake_desc": "Device advertises USB 3.0/3.1, but actual physical layer speed is negotiated at only {speed} (USB 2.0 High-Speed PHY). This drive likely has spoofed firmware or a fake blue port.",
+  "inspector.fake_desc":
+    "Device advertises USB 3.0/3.1, but actual physical layer speed is negotiated at only {speed} (USB 2.0 High-Speed PHY). This drive likely has spoofed firmware or a fake blue port.",
   "inspector.genuine_title": "Physical Hardware Verification Passed (Genuine USB 3.0+ Device)",
   "inspector.genuine_desc": "Physical PHY link negotiated genuine SuperSpeed/SuperSpeed+ rate at {speed}.",
   "inspector.usb2_title": "Standard USB 2.0 Interface",
@@ -205,6 +212,6 @@ export const taIn: TranslationDict = {
   "icon_picker.typec_desc": "Dual Type-C Drive for Phone & Mac",
   "icon_picker.secure_desc": "Encrypted Hardware with Physical Keypad",
   "icon_picker.reader_desc": "SD / MicroSD Card Reader",
-  "icon_picker.hdd_desc": "2.5\" Portable Mechanical Hard Drive",
+  "icon_picker.hdd_desc": '2.5" Portable Mechanical Hard Drive',
   "icon_picker.key_desc": "FIDO2 Security Key Hardware",
 };

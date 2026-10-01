@@ -103,8 +103,13 @@ func (a *App) startup(ctx context.Context) {
 		}
 		disk.InvalidateDiskCache()
 		a.emitEvent("vm:exit", map[string]interface{}{
-			"disk":  targetDisk,
-			"error": func() string { if vmErr != nil { return vmErr.Error() }; return "" }(),
+			"disk": targetDisk,
+			"error": func() string {
+				if vmErr != nil {
+					return vmErr.Error()
+				}
+				return ""
+			}(),
 		})
 	})
 
@@ -604,7 +609,3 @@ func (a *App) CalculateFileChecksum(filePath string, algo string) (*utils.Checks
 	}
 	return utils.CalculateFileChecksum(ctx, filePath, algo)
 }
-
-
-
-

@@ -175,4 +175,3 @@ export function formatDiskCapacity(formattedStr: string): string {
   const nominalWord = t("disk.nominal" as any) || "Nominal";
   return formattedStr.replace(/\(Nominal /g, `(${nominalWord} `);
 }
-

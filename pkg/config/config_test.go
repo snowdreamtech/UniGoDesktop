@@ -107,4 +107,3 @@ func TestConfigHealthAndCorruptRecovery(t *testing.T) {
 		t.Fatalf("expected loaded Theme 'dark', got %v, err: %v", loaded, err)
 	}
 }
-
