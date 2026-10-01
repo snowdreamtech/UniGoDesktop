@@ -108,8 +108,6 @@
               <span>{{ disk.writable !== false ? t("inspector.val_rw") : t("inspector.val_ro") }}</span>
             </span>
           </div>
-
-
         </div>
 
         <!-- Hardware Details Header & Grid -->
@@ -212,8 +210,6 @@ function formatPower(val?: string): string {
   }
   return str;
 }
-
-
 
 const logUserAction = (level: string, message: string, details: string = "") => {
   const app = (window as any)?.go?.main?.App;
