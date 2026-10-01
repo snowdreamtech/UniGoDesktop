@@ -336,7 +336,19 @@ func (a *App) SaveConfig(cfg *config.AppConfig) error {
 	if cfg == nil {
 		return config.GetDefaultConfig().Save()
 	}
+	if cfg.ProxyPassword != "" {
+		if err := config.SaveProxyPassword(cfg.ProxyPassword); err != nil {
+			logger.Error("Failed to save proxy password to system credential store", "error", err)
+			return err
+		}
+		cfg.ProxyPassword = ""
+	}
 	return cfg.Save()
+}
+
+// ClearProxyPassword removes the saved proxy password from the system credential store.
+func (a *App) ClearProxyPassword() error {
+	return config.DeleteProxyPassword()
 }
 
 // OpenURL opens the specified URL in the native desktop browser.

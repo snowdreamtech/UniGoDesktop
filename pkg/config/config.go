@@ -146,7 +146,7 @@ type AppConfig struct {
 	ProxyHost       string `json:"proxyHost" toml:"proxyHost"`             // Network proxy server host
 	ProxyPort       int    `json:"proxyPort" toml:"proxyPort"`             // Network proxy server port
 	ProxyUser       string `json:"proxyUser" toml:"proxyUser"`             // Network proxy authentication username
-	ProxyPassword   string `json:"proxyPassword" toml:"proxyPassword"`     // Network proxy authentication password
+	ProxyPassword   string `json:"proxyPassword" toml:"-"`                 // Stored securely in OS credential store, excluded from TOML file
 }
 
 // GetDefaultConfig returns the default application configuration.
@@ -289,6 +289,7 @@ func (c *AppConfig) Save() error {
 	// Update in-memory cache
 	configCacheMu.Lock()
 	cacheCopy := *c
+	cacheCopy.ProxyPassword = ""
 	configCache = &cacheCopy
 	configCachePath = cfgPath
 	if fi, statErr := os.Stat(cfgPath); statErr == nil {

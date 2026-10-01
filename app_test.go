@@ -59,6 +59,9 @@ func TestApp_LifecycleAndAPIs(t *testing.T) {
 
 	err = app.SaveConfig(cfg)
 	assert.NoError(t, err)
+
+	// ClearProxyPassword executes safely
+	_ = app.ClearProxyPassword()
 }
 
 func TestResolveWindowsUserDataPath(t *testing.T) {

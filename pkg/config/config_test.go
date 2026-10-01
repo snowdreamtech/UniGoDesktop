@@ -65,8 +65,11 @@ func TestConfigSaveAndLoad(t *testing.T) {
 	if loaded.GithubProxy != "https://proxy.example.com/" {
 		t.Errorf("expected GithubProxy 'https://proxy.example.com/', got %s", loaded.GithubProxy)
 	}
-	if loaded.ProxyProtocol != "socks5" || loaded.ProxyHost != "127.0.0.1" || loaded.ProxyPort != 1080 || loaded.ProxyUser != "dummy_user" || loaded.ProxyPassword != "dummy_password" {
+	if loaded.ProxyProtocol != "socks5" || loaded.ProxyHost != "127.0.0.1" || loaded.ProxyPort != 1080 || loaded.ProxyUser != "dummy_user" {
 		t.Errorf("proxy config mismatch: %+v", loaded)
+	}
+	if loaded.ProxyPassword != "" {
+		t.Errorf("expected ProxyPassword to be excluded from TOML persistence, got %q", loaded.ProxyPassword)
 	}
 }
 
