@@ -13,6 +13,7 @@
       @toggle-theme="toggleTheme"
       @open-settings="openSettings"
       @open-about="openAbout"
+      @open-logs="isLogViewerOpen = true"
       @select-lang="selectLanguage"
     />
 
@@ -31,6 +32,14 @@
 
     <!-- About Modal -->
     <AboutModal :show="isAboutOpen" @close="isAboutOpen = false" />
+
+    <!-- Log Viewer Modal -->
+    <LogViewerModal
+      :isOpen="isLogViewerOpen"
+      :logs="runtimeLogs"
+      @close="isLogViewerOpen = false"
+      @clear="handleClearLogs"
+    />
   </div>
 </template>
 
@@ -40,6 +49,7 @@ import AppHeader from "./components/AppHeader.vue";
 import HelloPanel from "./components/HelloPanel.vue";
 import SettingsModal from "./components/SettingsModal.vue";
 import AboutModal from "./components/AboutModal.vue";
+import LogViewerModal, { type LogItem } from "./components/LogViewerModal.vue";
 import ToastNotification from "./components/ToastNotification.vue";
 import { selectedLangSetting, setLanguage } from "./i18n";
 import { GetConfig, SaveConfig, CheckUpdate } from "../wailsjs/go/main/App";
@@ -57,7 +67,17 @@ const { toastMessage, toastType, showToast, dismissToast } = useToast();
 
 const isSettingsOpen = ref(false);
 const isAboutOpen = ref(false);
+const isLogViewerOpen = ref(false);
+const runtimeLogs = ref<LogItem[]>([]);
 const appConfig = ref<AppConfigType | null>(null);
+
+function handleClearLogs() {
+  runtimeLogs.value = [];
+  const w = window as any;
+  if (w.go && w.go.main && w.go.main.App && typeof w.go.main.App.ClearLogs === "function") {
+    w.go.main.App.ClearLogs().catch(() => {});
+  }
+}
 
 function handleWindowDrag(e: MouseEvent) {
   if (e.buttons !== 1 || e.detail > 1) return;
@@ -174,7 +194,23 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 onMounted(() => {
   loadConfig();
 
-  if (isWailsRuntime()) {
+  const w = window as any;
+  if (w.go && w.go.main && w.go.main.App && typeof w.go.main.App.GetRecentLogs === "function") {
+    w.go.main.App.GetRecentLogs().then((logs: any[]) => {
+      if (Array.isArray(logs)) {
+        runtimeLogs.value = logs;
+      }
+    }).catch(() => {});
+  }
+
+  if (isWailsRuntime() && window.runtime && typeof window.runtime.EventsOn === "function") {
+    window.runtime.EventsOn("log:entry", (entry: any) => {
+      runtimeLogs.value.push(entry);
+      if (runtimeLogs.value.length > 500) {
+        runtimeLogs.value.shift();
+      }
+    });
+
     try {
       WindowShow();
     } catch (e) {
@@ -204,6 +240,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleGlobalKeydown);
+
+  if (isWailsRuntime() && window.runtime && typeof window.runtime.EventsOff === "function") {
+    window.runtime.EventsOff("log:entry");
+  }
 
   if (mediaQueryList) {
     mediaQueryList.removeEventListener("change", handleSystemThemeChange);

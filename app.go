@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -69,15 +70,90 @@ func NewApp() *App {
 // startup is called when the Wails application starts up.
 func (a *App) startup(ctx context.Context) {
 	a.ctx, a.cancel = context.WithCancel(ctx)
+	logger.SetWailsContext(ctx)
 	logger.Info("UniGoDesktop Wails GUI runtime started successfully")
 }
 
 // shutdown is called when the Wails application is shutting down.
 func (a *App) shutdown(ctx context.Context) {
+	logger.SetWailsContext(nil)
 	if a.cancel != nil {
 		a.cancel()
 	}
 	logger.Info("UniGoDesktop Wails GUI runtime shutting down")
+}
+
+// GetRecentLogs retrieves the in-memory buffered logs.
+func (a *App) GetRecentLogs() []logger.LogEntry {
+	return logger.GetRecentLogs()
+}
+
+// ClearLogs clears the in-memory buffered logs.
+func (a *App) ClearLogs() {
+	logger.ClearLogs()
+}
+
+// LogAction records structured user or frontend interactions.
+func (a *App) LogAction(level, message, details string) {
+	switch strings.ToUpper(level) {
+	case "ERROR":
+		logger.Error(message, "details", details)
+	case "WARN":
+		logger.Warn(message, "details", details)
+	case "DEBUG":
+		logger.Debug(message, "details", details)
+	default:
+		logger.Info(message, "details", details)
+	}
+}
+
+// ExportLogs opens a native save file dialog to export log content to a file (.log or .txt).
+func (a *App) ExportLogs(content string, title string, logFilter string, textFilter string, allFilter string) (string, error) {
+	if title == "" {
+		title = "Export Log File"
+	}
+	if logFilter == "" {
+		logFilter = "Log Files (*.log)"
+	}
+	if textFilter == "" {
+		textFilter = "Text Files (*.txt)"
+	}
+	if allFilter == "" {
+		allFilter = "All Files (*.*)"
+	}
+
+	defaultFilename := fmt.Sprintf("unigodesktop-log-%s.log", time.Now().Format("2006-01-02-150405"))
+	filePath, err := wailsRuntime.SaveFileDialog(a.ctx, wailsRuntime.SaveDialogOptions{
+		Title:           title,
+		DefaultFilename: defaultFilename,
+		Filters: []wailsRuntime.FileFilter{
+			{
+				DisplayName: logFilter,
+				Pattern:     "*.log",
+			},
+			{
+				DisplayName: textFilter,
+				Pattern:     "*.txt",
+			},
+			{
+				DisplayName: allFilter,
+				Pattern:     "*.*",
+			},
+		},
+	})
+	if err != nil {
+		logger.Error("Failed to open save file dialog for log export", "error", err)
+		return "", fmt.Errorf("open save file dialog: %w", err)
+	}
+	if filePath == "" {
+		return "", nil // User cancelled
+	}
+	if err := os.WriteFile(filePath, []byte(content), 0600); err != nil {
+		logger.Error("Failed to write log export file", "path", filePath, "error", err)
+		return "", fmt.Errorf("write log file: %w", err)
+	}
+	logger.Info("Logs exported successfully", "path", filePath)
+	return filePath, nil
 }
 
 // beforeClose is invoked before the application window closes.

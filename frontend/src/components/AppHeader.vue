@@ -51,6 +51,11 @@
         <span>{{ currentTheme === "light" ? "🌙" : "☀️" }}</span>
       </button>
 
+      <!-- Log Viewer Button -->
+      <button class="icon-action-btn" :title="t('log.title') || 'Logs'" @click="emit('open-logs')">
+        <span>📜</span>
+      </button>
+
       <!-- Settings Button -->
       <button class="icon-action-btn" :title="t('settings.title') || 'Settings'" @click="emit('open-settings')">
         <span>⚙️</span>
@@ -79,6 +84,7 @@ const emit = defineEmits<{
   (e: "toggle-theme"): void;
   (e: "open-settings"): void;
   (e: "open-about"): void;
+  (e: "open-logs"): void;
   (e: "select-lang", lang: string): void;
 }>();
 
