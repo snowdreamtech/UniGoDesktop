@@ -135,8 +135,6 @@ export async function setLocale(locale: string) {
   updateDocumentDir();
 }
 
-export const setLanguage = setLocale;
-
 export const isRtl = computed(() => {
   return ["ar-SA", "he-IL", "fa-IR", "ur-PK"].includes(currentLocale.value);
 });
@@ -148,6 +146,8 @@ export function updateDocumentDir() {
     document.documentElement.dir = dir;
   }
 }
+
+export const setLanguage = setLocale;
 
 // Asynchronously load initial locale if not pre-bundled
 const initLoc = getInitialLocale();
