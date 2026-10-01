@@ -6,7 +6,6 @@ package disk
 import (
 	"io/fs"
 	"os"
-	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
@@ -37,12 +36,6 @@ func TestIsIgnoredVolume(t *testing.T) {
 		{"VM swap volume", "VM", true},
 		{"EFI partition", "EFI", true},
 		{"ESP partition", "ESP", true},
-		{"VTOYEFI upper", "VTOYEFI", true},
-		{"vtoyefi lower", "vtoyefi", true},
-		{"VTOYEFI with prefix", "VTOYEFI_BOOT", true},
-		{"UNIBOOTEFI upper", "UNIBOOTEFI", true},
-		{"unibootefi lower", "unibootefi", true},
-		{"UNIBOOTEFI with prefix", "UNIBOOTEFI_BOOT", true},
 		{"EFI_BOOT partition", "EFI_BOOT", true},
 		{"System Reserved", "System Reserved", true},
 		{"WinRE partition", "WinRE", true},
@@ -50,8 +43,6 @@ func TestIsIgnoredVolume(t *testing.T) {
 		{"Xcode DMG volume", "Xcode", true},
 		{"Installer volume", "Installer", true},
 		{"Time Machine backup", "Time Machine Backups", true},
-		{"Normal Ventoy volume", "Ventoy", false},
-		{"Normal UniBoot volume", "UniBoot", false},
 		{"Normal USB volume", "MyUSBKey", false},
 	}
 
@@ -300,180 +291,4 @@ func TestDarwinVolumeSnapshotUsesDeviceIdentity(t *testing.T) {
 	assert.Contains(t, snapshot, "disk2")
 	assert.Contains(t, snapshot, "disk3")
 	assert.NotEqual(t, "UNTITLED|UNTITLED 1", snapshot)
-}
-
-func TestIdentifyThirdPartyBoot_Fingerprints(t *testing.T) {
-	tests := []struct {
-		name          string
-		relativeDirs  []string
-		relativeFiles []string
-		expected      ThirdPartyBootType
-	}{
-		{
-			name:          "Rufus Disk with rufus.efi",
-			relativeDirs:  []string{"EFI/BOOT"},
-			relativeFiles: []string{"rufus.efi", "EFI/BOOT/BOOTX64.EFI"},
-			expected:      BootTypeRufus,
-		},
-		{
-			name:          "Rufus Disk with autounattend.xml bypass",
-			relativeDirs:  []string{"sources"},
-			relativeFiles: []string{"autounattend.xml", "autorun.ico", "sources/boot.wim"},
-			expected:      BootTypeRufus,
-		},
-		{
-			name:          "WePE Maintenance Disk with WEPE directory",
-			relativeDirs:  []string{"WEPE"},
-			relativeFiles: []string{"WEPE/WEPE64.WIM"},
-			expected:      BootTypeWePE,
-		},
-		{
-			name:          "EasyU Maintenance Disk with EASYU directory",
-			relativeDirs:  []string{"EASYU"},
-			relativeFiles: []string{"EASYU/EasyU64.wim"},
-			expected:      BootTypeEasyU,
-		},
-		{
-			name:          "EasyU Maintenance Disk with USBDATA directory",
-			relativeDirs:  []string{"USBDATA"},
-			relativeFiles: []string{"USBDATA/SKY.wim"},
-			expected:      BootTypeEasyU,
-		},
-		{
-			name:          "YUMI Multiboot USB",
-			relativeDirs:  []string{"multiboot/menu"},
-			relativeFiles: []string{"multiboot/menu/yumi.cfg"},
-			expected:      BootTypeYUMI,
-		},
-		{
-			name:          "OpenCore Hackintosh Bootloader",
-			relativeDirs:  []string{"EFI/OC"},
-			relativeFiles: []string{"EFI/OC/OpenCore.efi", "EFI/OC/config.plist"},
-			expected:      BootTypeOpenCore,
-		},
-		{
-			name:          "Clover Hackintosh Bootloader",
-			relativeDirs:  []string{"EFI/CLOVER"},
-			relativeFiles: []string{"EFI/CLOVER/CloverX64.efi"},
-			expected:      BootTypeClover,
-		},
-		{
-			name:          "Generic WinPE Maintenance Disk with winpe.ini",
-			relativeDirs:  []string{"sources"},
-			relativeFiles: []string{"winpe.ini", "sources/boot.wim"},
-			expected:      BootTypeWinPE,
-		},
-		{
-			name:          "Windows Official Installer with install.wim",
-			relativeDirs:  []string{"sources"},
-			relativeFiles: []string{"sources/boot.wim", "sources/install.wim"},
-			expected:      BootTypeWindowsInstaller,
-		},
-		{
-			name:          "Windows Official Installer with install.esd",
-			relativeDirs:  []string{"sources"},
-			relativeFiles: []string{"sources/install.esd"},
-			expected:      BootTypeWindowsInstaller,
-		},
-		{
-			name:          "Linux Live USB (Ubuntu casper)",
-			relativeDirs:  []string{"casper", "boot/grub"},
-			relativeFiles: []string{"boot/grub/grub.cfg"},
-			expected:      BootTypeLinuxLive,
-		},
-		{
-			name:          "Linux Live USB (Fedora LiveOS)",
-			relativeDirs:  []string{"LiveOS"},
-			relativeFiles: []string{"LiveOS/squashfs.img"},
-			expected:      BootTypeLinuxLive,
-		},
-		{
-			name:          "Generic UEFI Fallback USB",
-			relativeDirs:  []string{"EFI/BOOT"},
-			relativeFiles: []string{"EFI/BOOT/BOOTX64.EFI"},
-			expected:      BootTypeGenericUEFI,
-		},
-		{
-			name:          "Plain Data USB (no boot files)",
-			relativeDirs:  []string{"Documents", "Photos"},
-			relativeFiles: []string{"Documents/resume.pdf", "Photos/trip.jpg"},
-			expected:      BootTypeNone,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tmpDir := t.TempDir()
-			for _, d := range tt.relativeDirs {
-				err := os.MkdirAll(filepath.Join(tmpDir, d), 0755)
-				assert.NoError(t, err)
-			}
-			for _, f := range tt.relativeFiles {
-				filePath := filepath.Join(tmpDir, f)
-				err := os.MkdirAll(filepath.Dir(filePath), 0755)
-				assert.NoError(t, err)
-				err = os.WriteFile(filePath, []byte("dummy binary"), 0644)
-				assert.NoError(t, err)
-			}
-
-			detected := IdentifyThirdPartyBoot([]string{tmpDir})
-			assert.Equal(t, tt.expected, detected)
-		})
-	}
-}
-
-func TestDetectBootStatus_Classification(t *testing.T) {
-	// 1. UniBoot Cloud Mode
-	status, code := DetectBootStatus("GPT", false, true, BootTypeNone, nil, false)
-	assert.Equal(t, "UniBoot (1秒极速云引导盘)", status)
-	assert.Equal(t, "uniboot_cloud", code)
-
-	// 2. UniBoot Hybrid Mode
-	hybridManifest := &UniBootManifest{Magic: MagicUniBootDisk, Mode: "hybrid", Version: "1.0.0"}
-	status, code = DetectBootStatus("GPT", true, false, BootTypeNone, hybridManifest, false)
-	assert.Equal(t, "UniBoot (混合模式引导盘)", status)
-	assert.Equal(t, "uniboot_hybrid", code)
-
-	// 2b. UniBoot Hybrid Mode even if isRealVentoy is temporarily false (e.g. unprivileged raw MBR read)
-	status, code = DetectBootStatus("GPT", false, false, BootTypeNone, hybridManifest, false)
-	assert.Equal(t, "UniBoot (混合模式引导盘)", status)
-	assert.Equal(t, "uniboot_hybrid", code)
-
-	// 3. Genuine Ventoy Disk (no UniBoot manifest)
-	status, code = DetectBootStatus("GPT", true, false, BootTypeNone, nil, false)
-	assert.Equal(t, "原生 Ventoy 启动盘 (可无损升级)", status)
-	assert.Equal(t, "ventoy_pure", code)
-
-	// 4. Third-party popular tools & boot disks
-	status, code = DetectBootStatus("GPT", false, false, BootTypeRufus, nil, false)
-	assert.Equal(t, "第三方引导: Rufus 制作盘", status)
-	assert.Equal(t, "third_party_boot", code)
-	assert.Equal(t, "rufus", MapThirdPartyBootCode(BootTypeRufus))
-	assert.Equal(t, "wepe", MapThirdPartyBootCode(BootTypeWePE))
-	assert.Equal(t, "easyu", MapThirdPartyBootCode(BootTypeEasyU))
-	assert.Equal(t, "yumi", MapThirdPartyBootCode(BootTypeYUMI))
-	assert.Equal(t, "opencore", MapThirdPartyBootCode(BootTypeOpenCore))
-	assert.Equal(t, "clover", MapThirdPartyBootCode(BootTypeClover))
-	assert.Equal(t, "windows_installer", MapThirdPartyBootCode(BootTypeWindowsInstaller))
-	assert.Equal(t, "winpe_generic", MapThirdPartyBootCode(BootTypeWinPE))
-	assert.Equal(t, "linux_live", MapThirdPartyBootCode(BootTypeLinuxLive))
-	assert.Equal(t, "generic_uefi", MapThirdPartyBootCode(BootTypeGenericUEFI))
-
-	// 5. Unmounted ESP partition detected in unprivileged mode
-	status, code = DetectBootStatusWithElevation("MBR", false, false, BootTypeNone, nil, true, false)
-	assert.Equal(t, "待授权", status)
-	assert.Equal(t, "needs_privilege", code)
-
-	// 6. Normal data disks
-	status, code = DetectBootStatus("GPT", false, false, BootTypeNone, nil, false)
-	assert.Equal(t, "GPT 数据盘", status)
-	assert.Equal(t, "gpt_data", code)
-
-	status, code = DetectBootStatus("MBR", false, false, BootTypeNone, nil, false)
-	assert.Equal(t, "MBR 数据盘", status)
-	assert.Equal(t, "mbr_data", code)
-
-	status, code = DetectBootStatus("", false, false, BootTypeNone, nil, false)
-	assert.Equal(t, "数据存储盘 (未检测到引导包)", status)
-	assert.Equal(t, "data_storage", code)
 }
