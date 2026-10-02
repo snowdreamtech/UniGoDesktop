@@ -111,20 +111,20 @@ const isLight = computed(() => {
   return typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "light";
 });
 
+import { isClickOnScrollbar, triggerNativeDrag } from "../utils/windowDrag";
+
 function handleHeaderMouseDown(e: MouseEvent) {
   if (e.buttons !== 1 || e.detail > 1) {
+    return;
+  }
+  if (isClickOnScrollbar(e)) {
     return;
   }
   const target = e.target as HTMLElement | null;
   if (target && target.closest("button, input, select, a, .lang-dropdown-menu")) {
     return;
   }
-  const w = window as any;
-  if (typeof w.WailsInvoke === "function") {
-    w.WailsInvoke("drag");
-  } else if (w.runtime && typeof w.runtime.WindowStartDrag === "function") {
-    w.runtime.WindowStartDrag();
-  }
+  triggerNativeDrag();
 }
 
 function handleHeaderDblClick(e: MouseEvent) {

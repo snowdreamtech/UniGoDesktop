@@ -79,14 +79,12 @@ function handleClearLogs() {
   }
 }
 
+import { isClickOnScrollbar, triggerNativeDrag } from "./utils/windowDrag";
+
 function handleWindowDrag(e: MouseEvent) {
   if (e.buttons !== 1 || e.detail > 1) return;
-  const w = window as any;
-  if (typeof w.WailsInvoke === "function") {
-    w.WailsInvoke("drag");
-  } else if (w.runtime && typeof w.runtime.WindowStartDrag === "function") {
-    w.runtime.WindowStartDrag();
-  }
+  if (isClickOnScrollbar(e)) return;
+  triggerNativeDrag();
 }
 
 function selectLanguage(langVal: string) {
@@ -259,7 +257,7 @@ onUnmounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  right: 18px;
   height: 24px;
   z-index: 999;
   pointer-events: auto;
