@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.11.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.10.0...v0.11.0) (2026-10-02)
+
+
+### 🚀 Features
+
+* **privilege:** localize administrator elevation prompt message across all supported locales ([a4d09d5](https://github.com/snowdreamtech/UniGoDesktop/commit/a4d09d5b5dad7f0ef0168cca82e9391637711b4f))
+
+
+### 🐛 Bug Fixes
+
+* **gui:** allow seamless blank area window dragging while preserving scrollbar scrolling ([11ed91a](https://github.com/snowdreamtech/UniGoDesktop/commit/11ed91a19a43aba74df4c76ead9dd0bdc9766ae6))
+* **gui:** prevent scrollbar clicks and dragging from moving window ([d84ab21](https://github.com/snowdreamtech/UniGoDesktop/commit/d84ab217dd440e6fbfb24cea1f327c4ed614d5a8))
+* **theme:** eliminate dark flash on restart and synchronize native window theme ([ce448f7](https://github.com/snowdreamtech/UniGoDesktop/commit/ce448f733c35c52f32f808b83875009dde081876))
+* **theme:** synchronize theme management and dynamic system preference listener ([c5f5128](https://github.com/snowdreamtech/UniGoDesktop/commit/c5f5128d7cc4bd2f872af80c6aaa5cc1df972abb))
+
+
+### ♻️ Miscellaneous Chores
+
+* **deps:** sync dependabot config and unirtm toolchain ([2b2fdf6](https://github.com/snowdreamtech/UniGoDesktop/commit/2b2fdf61f092fa9ba68c727e4cb5ca40e97c9076))
+
 ## [0.10.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.9.0...v0.10.0) (2026-10-01)
 
 
