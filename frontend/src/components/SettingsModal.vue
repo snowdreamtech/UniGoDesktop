@@ -75,6 +75,7 @@ import { ref, computed, watch } from "vue";
 import { t, selectedLangSetting, setLanguage, SUPPORTED_LANGUAGES } from "../i18n";
 import { GetConfig, SaveConfig, TestNetwork } from "../../wailsjs/go/main/App";
 import { isWails } from "../utils/wails";
+import { useTheme } from "../composables/useTheme";
 import GeneralTab from "./settings/GeneralTab.vue";
 import NetworkTab from "./settings/NetworkTab.vue";
 
@@ -89,13 +90,15 @@ const emit = defineEmits<{
   (e: "save", payload: any): void;
 }>();
 
+const { currentTheme, applyTheme } = useTheme();
+
 const activeTab = ref<"general" | "network">("general");
 const isAutoSaving = ref(false);
 const saveStatusText = ref("");
 
 // General Settings
 const appLanguage = ref(selectedLangSetting.value || "auto");
-const appTheme = ref("dark");
+const appTheme = ref(currentTheme.value || "system");
 const autoCheckUpdate = ref(true);
 const enableTray = ref(false);
 const closeAction = ref("quit");
@@ -147,20 +150,6 @@ function onThemeChange(val: string) {
   triggerAutoSave();
 }
 
-function applyTheme(themeName: string) {
-  let applied = themeName;
-  if (themeName === "system") {
-    const isDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    applied = isDark ? "dark" : "light";
-  }
-  document.documentElement.setAttribute("data-theme", applied);
-  try {
-    localStorage.setItem("unigo_theme_cache", themeName);
-  } catch (e) {
-    // localStorage may be unavailable
-  }
-}
-
 async function loadFullConfig() {
   isInitializing = true;
   if (isWails()) {
@@ -168,7 +157,11 @@ async function loadFullConfig() {
       const cfg = await GetConfig();
       if (cfg) {
         autoCheckUpdate.value = cfg.autoCheckUpdate !== false;
-        appTheme.value = cfg.theme || "dark";
+        if (cfg.theme === "light" || cfg.theme === "dark" || cfg.theme === "system") {
+          appTheme.value = cfg.theme;
+        } else {
+          appTheme.value = "system";
+        }
         appLanguage.value = cfg.language || "auto";
         enableTray.value = (cfg as any).enableTray === true;
         closeAction.value = (cfg as any).closeAction || "quit";

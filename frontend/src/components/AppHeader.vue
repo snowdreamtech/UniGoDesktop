@@ -42,13 +42,11 @@
       <button
         class="icon-action-btn"
         :title="
-          currentTheme === 'light'
-            ? t('theme.toggleDark') || 'Switch to Dark Theme'
-            : t('theme.toggleLight') || 'Switch to Light Theme'
+          isLight ? t('theme.toggleDark') || 'Switch to Dark Theme' : t('theme.toggleLight') || 'Switch to Light Theme'
         "
         @click="emit('toggle-theme')"
       >
-        <span>{{ currentTheme === "light" ? "🌙" : "☀️" }}</span>
+        <span>{{ isLight ? "🌙" : "☀️" }}</span>
       </button>
 
       <!-- Log Viewer Button -->
@@ -105,6 +103,12 @@ const currentLangLabel = computed(() => {
   }
   const opt = langOptions.value.find((o) => o.value === props.currentLang);
   return opt ? opt.label : t("common.lang") || "Language";
+});
+
+const isLight = computed(() => {
+  if (props.currentTheme === "light") return true;
+  if (props.currentTheme === "dark") return false;
+  return typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "light";
 });
 
 function handleHeaderMouseDown(e: MouseEvent) {
