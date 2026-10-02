@@ -88,6 +88,12 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx, a.cancel = context.WithCancel(ctx)
 	logger.SetWailsContext(ctx)
 
+	if cfg, err := config.Load(); err == nil && cfg != nil {
+		if strings.HasPrefix(strings.ToLower(cfg.Language), "zh") {
+			privilege.SetDefaultElevationPrompt("UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。")
+		}
+	}
+
 	// Automatically notify frontend when removable USB storage devices are plugged or unplugged
 	disk.StartHotplugMonitor(a.ctx, func() {
 		logger.Debug("Removable storage hotplug change detected by background monitor")
@@ -404,6 +410,12 @@ func (a *App) RestartApp() error {
 
 // ReloadAppMenu rebuilds and updates the native application menu with the specified language.
 func (a *App) ReloadAppMenu(lang string) error {
+	if strings.HasPrefix(strings.ToLower(lang), "zh") {
+		privilege.SetDefaultElevationPrompt("UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。")
+	} else {
+		privilege.SetDefaultElevationPrompt("UniGoDesktop requires administrator privileges to access raw storage devices and system resources.")
+	}
+
 	if a.ctx == nil {
 		return nil
 	}
@@ -574,12 +586,28 @@ func (a *App) IsPrivileged() bool {
 }
 
 // RequestPrivilegeElevation prompts the user for administrator privileges across operating systems.
-func (a *App) RequestPrivilegeElevation() (bool, error) {
+// An optional custom prompt string can be provided to support localized authorization dialogs.
+func (a *App) RequestPrivilegeElevation(customPrompt string) (bool, error) {
 	if privilege.IsElevated() {
 		return true, nil
 	}
 
-	prompt := "UniGoDesktop requires administrator privileges to access raw storage devices and system resources."
+	prompt := strings.TrimSpace(customPrompt)
+	if prompt != "" {
+		privilege.SetDefaultElevationPrompt(prompt)
+	} else {
+		cfg, _ := config.Load()
+		lang := ""
+		if cfg != nil {
+			lang = strings.ToLower(cfg.Language)
+		}
+		if strings.HasPrefix(lang, "zh") {
+			prompt = "UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。"
+		} else {
+			prompt = privilege.GetDefaultElevationPrompt()
+		}
+	}
+
 	_, err := privilege.StartOrConnectWorker(prompt)
 	if err != nil {
 		if strings.Contains(err.Error(), "canceled") || strings.Contains(err.Error(), "rejected") {

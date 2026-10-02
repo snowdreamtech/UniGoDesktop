@@ -48,7 +48,7 @@ declare global {
           LaunchVMWithConfig?(targetDisk: string, vmType: string, cfg: any): Promise<void>;
           StopVM?(): Promise<void>;
           IsPrivileged?(): Promise<boolean>;
-          RequestPrivilegeElevation?(): Promise<boolean>;
+          RequestPrivilegeElevation?(customPrompt?: string): Promise<boolean>;
           CheckConfigHealth?(): Promise<any>;
           CalculateFileChecksum?(filePath: string, algo?: string): Promise<any>;
         };

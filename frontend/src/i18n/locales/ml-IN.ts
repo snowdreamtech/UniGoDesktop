@@ -5,8 +5,7 @@ export const mlIn: TranslationDict = {
   "app.subtitle": "क्रॉस-प्लेटफ़ॉर्म डेस्कटॉप एप्लिकेशन टेम्पलेट (Go + Wails + Vue 3 + TypeScript)",
   "app.greeting": "UniGoDesktop-ൽ നിന്നുള്ള ആശംസകൾ!",
   "app.template_badge": "डेस्कटॉप टेम्पलेट Go + Wails + Vue 3 + TypeScript",
-  "app.template_desc":
-    "अंतर्राष्ट्रीयकरण, थीम और नेटवर्क त्वरण के साथ आधुनिक, मजबूत और विस्तार योग्य डेस्कटॉप एप्लिकेशन टेम्पलेट।",
+  "app.template_desc": "अंतर्राष्ट्रीयकरण, थीम और नेटवर्क त्वरण के साथ आधुनिक, मजबूत और विस्तार योग्य डेस्कटॉप एप्लिकेशन टेम्पलेट।",
   "common.autoDetect": "സ്വയമേവ കണ്ടെത്തൽ",
   "common.langAuto": "സ്വയമേവ",
   "common.lang": "ഭാഷ",
@@ -121,16 +120,14 @@ export const mlIn: TranslationDict = {
   "privilege.status_standard": "Unauthorized",
   "privilege.btn_elevate": "Request Admin Access",
   "privilege.modal_title": "Administrator Permission Required",
+  "privilege.elevation_prompt": "UniGoDesktop requires administrator privileges to access raw storage devices and system resources.",
   "privilege.modal_subtitle": "System authorization is required to perform privileged actions",
   "privilege.reason_title": "Why is Administrator Privilege Required?",
-  "privilege.reason_desc":
-    "Operating systems restrict direct hardware, raw storage, and low-level system configuration access. Authorization grants secure scoped access.",
+  "privilege.reason_desc": "Operating systems restrict direct hardware, raw storage, and low-level system configuration access. Authorization grants secure scoped access.",
   "privilege.scope_title": "Scope of Access",
-  "privilege.scope_desc":
-    "Restricted strictly to the requested operation. Internal and system data are kept untouched and protected.",
+  "privilege.scope_desc": "Restricted strictly to the requested operation. Internal and system data are kept untouched and protected.",
   "privilege.safety_title": "Safety & Transparency",
-  "privilege.safety_desc":
-    "Actions follow principle of least privilege, non-destructive safety checks, and fully open-source implementation.",
+  "privilege.safety_desc": "Actions follow principle of least privilege, non-destructive safety checks, and fully open-source implementation.",
   "privilege.confirm_btn": "Authorize Now",
   "privilege.cancel_btn": "Cancel",
   "privilege.success_msg": "Administrator privilege granted",
@@ -146,8 +143,7 @@ export const mlIn: TranslationDict = {
   "inspector.smart": "SMART Health:",
   "inspector.sector": "Sector Size:",
   "inspector.fake_title": "Fake USB 3.0 Warning Alert!",
-  "inspector.fake_desc":
-    "Device advertises USB 3.0/3.1, but actual physical layer speed is negotiated at only {speed} (USB 2.0 High-Speed PHY). This drive likely has spoofed firmware or a fake blue port.",
+  "inspector.fake_desc": "Device advertises USB 3.0/3.1, but actual physical layer speed is negotiated at only {speed} (USB 2.0 High-Speed PHY). This drive likely has spoofed firmware or a fake blue port.",
   "inspector.genuine_title": "Physical Hardware Verification Passed (Genuine USB 3.0+ Device)",
   "inspector.genuine_desc": "Physical PHY link negotiated genuine SuperSpeed/SuperSpeed+ rate at {speed}.",
   "inspector.usb2_title": "Standard USB 2.0 Interface",
@@ -191,6 +187,6 @@ export const mlIn: TranslationDict = {
   "icon_picker.typec_desc": "Dual Type-C Drive for Phone & Mac",
   "icon_picker.secure_desc": "Encrypted Hardware with Physical Keypad",
   "icon_picker.reader_desc": "SD / MicroSD Card Reader",
-  "icon_picker.hdd_desc": '2.5" Portable Mechanical Hard Drive',
+  "icon_picker.hdd_desc": "2.5\" Portable Mechanical Hard Drive",
   "icon_picker.key_desc": "FIDO2 Security Key Hardware",
 };

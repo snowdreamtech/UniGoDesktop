@@ -121,6 +121,7 @@ export const zhCn: TranslationDict = {
   "privilege.status_standard": "未授权",
   "privilege.btn_elevate": "请求管理员权限",
   "privilege.modal_title": "需要管理员权限",
+  "privilege.elevation_prompt": "UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。",
   "privilege.modal_subtitle": "执行特权操作需要系统管理员授权",
   "privilege.reason_title": "为什么需要管理员权限？",
   "privilege.reason_desc": "操作系统对直接硬件访问、底层存储设备与低级系统配置有保护限制，授权后即可正常操作。",
