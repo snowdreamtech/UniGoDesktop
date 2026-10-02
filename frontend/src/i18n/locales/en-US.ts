@@ -122,7 +122,8 @@ export const enUs: TranslationDict = {
   "privilege.status_standard": "Unauthorized",
   "privilege.btn_elevate": "Request Admin Access",
   "privilege.modal_title": "Administrator Permission Required",
-  "privilege.elevation_prompt": "UniGoDesktop requires administrator privileges to access raw storage devices and system resources.",
+  "privilege.elevation_prompt":
+    "UniGoDesktop requires administrator privileges to access raw storage devices and system resources.",
   "privilege.modal_subtitle": "System authorization is required to perform privileged actions",
   "privilege.reason_title": "Why is Administrator Privilege Required?",
   "privilege.reason_desc":
@@ -196,6 +197,6 @@ export const enUs: TranslationDict = {
   "icon_picker.typec_desc": "Dual Type-C Drive for Phone & Mac",
   "icon_picker.secure_desc": "Encrypted Hardware with Physical Keypad",
   "icon_picker.reader_desc": "SD / MicroSD Card Reader",
-  "icon_picker.hdd_desc": "2.5\" Portable Mechanical Hard Drive",
+  "icon_picker.hdd_desc": '2.5" Portable Mechanical Hard Drive',
   "icon_picker.key_desc": "FIDO2 Security Key Hardware",
 };
