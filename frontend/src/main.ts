@@ -141,7 +141,6 @@ window.addEventListener("mousedown", (e: MouseEvent) => {
     "code",
     "label",
     "dialog",
-    ".card-content",
     ".lang-selector-header",
     ".lang-dropdown-menu",
     ".terminal-body",
@@ -151,7 +150,6 @@ window.addEventListener("mousedown", (e: MouseEvent) => {
     ".modal-body",
     ".settings-modal-card",
     ".about-modal-card",
-    ".card",
     ".no-drag",
     "[contenteditable='true']",
     "[role='button']",
@@ -163,17 +161,7 @@ window.addEventListener("mousedown", (e: MouseEvent) => {
     return;
   }
 
-  // 3. Respect CSS --wails-draggable: no-drag or -webkit-app-region: no-drag on target and ancestors
-  let curr: HTMLElement | null = target;
-  while (curr && curr !== document.documentElement) {
-    const comp = window.getComputedStyle(curr);
-    if ((comp as any).webkitAppRegion === "no-drag" || comp.getPropertyValue("--wails-draggable") === "no-drag") {
-      return;
-    }
-    curr = curr.parentElement;
-  }
-
-  // 4. Do not drag if user is selecting text
+  // 3. Do not drag if user is selecting text
   const selection = window.getSelection();
   if (selection && selection.toString().length > 0 && selection.containsNode(target, true)) {
     return;
