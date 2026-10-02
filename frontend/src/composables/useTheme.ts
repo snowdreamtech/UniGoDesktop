@@ -65,6 +65,9 @@ function updateDomAndWindow(themeName: string, applied: "dark" | "light") {
   }
 }
 
+// Apply initial theme immediately upon module evaluation
+updateDomAndWindow(currentTheme.value, resolveEffectiveTheme(currentTheme.value));
+
 // Global listener for OS system theme changes
 if (typeof window !== "undefined" && window.matchMedia) {
   const mql = window.matchMedia("(prefers-color-scheme: dark)");

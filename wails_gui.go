@@ -16,6 +16,7 @@ import (
 
 	"github.com/snowdreamtech/unigodesktop/cmd"
 	"github.com/snowdreamtech/unigodesktop/internal/env"
+	"github.com/snowdreamtech/unigodesktop/internal/sysinfo"
 	"github.com/snowdreamtech/unigodesktop/pkg/config"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -92,12 +93,33 @@ func RunWails() error {
 	app := NewApp()
 
 	// Determine native appearance and background color from saved configuration
-	// to prevent flash-of-white / mismatched titlebars upon startup.
-	macAppearance := mac.NSAppearanceNameDarkAqua
-	backgroundColour := &options.RGBA{R: 7, G: 10, B: 18, A: 255}
-	if cfg, err := config.Load(); err == nil && cfg != nil && cfg.Theme == "light" {
-		macAppearance = mac.NSAppearanceNameAqua
-		backgroundColour = &options.RGBA{R: 241, G: 245, B: 249, A: 255}
+	// or the active operating system appearance to prevent flash-of-dark/light
+	// or mismatched titlebars upon startup.
+	cfgTheme := "system"
+	if cfg, err := config.Load(); err == nil && cfg != nil && cfg.Theme != "" {
+		cfgTheme = cfg.Theme
+	}
+
+	var isDark bool
+	switch cfgTheme {
+	case "dark":
+		isDark = true
+	case "light":
+		isDark = false
+	default: // "system"
+		isDark = sysinfo.IsSystemDarkTheme()
+	}
+
+	macAppearance := mac.NSAppearanceNameAqua
+	backgroundColour := &options.RGBA{R: 241, G: 245, B: 249, A: 255}
+	winTheme := windows.SystemDefault
+
+	if isDark {
+		macAppearance = mac.NSAppearanceNameDarkAqua
+		backgroundColour = &options.RGBA{R: 7, G: 10, B: 18, A: 255}
+		winTheme = windows.Dark
+	} else if cfgTheme == "light" {
+		winTheme = windows.Light
 	}
 
 	return wails.Run(&options.App{
@@ -133,7 +155,7 @@ func RunWails() error {
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
-			Theme:                windows.SystemDefault,
+			Theme:                winTheme,
 			BackdropType:         windows.Auto,
 		},
 		Mac: &mac.Options{
