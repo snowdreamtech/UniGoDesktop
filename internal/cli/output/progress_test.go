@@ -409,4 +409,3 @@ func TestProgressIndicator_ShowPercentage(t *testing.T) {
 	// Should show percentage somewhere in the output
 	assert.Regexp(t, `\d+\.\d+%`, output)
 }
-
