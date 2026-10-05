@@ -20,6 +20,7 @@ import (
 
 	"github.com/snowdreamtech/unigodesktop/internal/env"
 	"github.com/snowdreamtech/unigodesktop/internal/logger"
+	"github.com/snowdreamtech/unigodesktop/internal/sysinfo"
 	"github.com/snowdreamtech/unigodesktop/pkg/config"
 	"github.com/snowdreamtech/unigodesktop/pkg/disk"
 	"github.com/snowdreamtech/unigodesktop/pkg/hypervisor"
@@ -354,7 +355,27 @@ func (a *App) SaveConfig(cfg *config.AppConfig) error {
 		}
 		cfg.ProxyPassword = ""
 	}
-	return cfg.Save()
+	if err := cfg.Save(); err != nil {
+		return err
+	}
+	if a.ctx != nil && a.ctx.Value("frontend") != nil {
+		switch cfg.Theme {
+		case "dark":
+			wailsRuntime.WindowSetDarkTheme(a.ctx)
+			wailsRuntime.WindowSetBackgroundColour(a.ctx, 7, 10, 18, 255)
+		case "light":
+			wailsRuntime.WindowSetLightTheme(a.ctx)
+			wailsRuntime.WindowSetBackgroundColour(a.ctx, 241, 245, 249, 255)
+		default:
+			wailsRuntime.WindowSetSystemDefaultTheme(a.ctx)
+			if sysinfo.IsSystemDarkTheme() {
+				wailsRuntime.WindowSetBackgroundColour(a.ctx, 7, 10, 18, 255)
+			} else {
+				wailsRuntime.WindowSetBackgroundColour(a.ctx, 241, 245, 249, 255)
+			}
+		}
+	}
+	return nil
 }
 
 // ClearProxyPassword removes the saved proxy password from the system credential store.

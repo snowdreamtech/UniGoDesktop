@@ -1,5 +1,6 @@
 import { onMounted, onUnmounted } from "vue";
 import { isWailsRuntime } from "../utils/wails";
+import { syncWindowTheme } from "./useTheme";
 
 export interface UseAppRuntimeEventsOptions {
   openAbout: () => void;
@@ -19,6 +20,7 @@ export function useAppRuntimeEvents(options: UseAppRuntimeEventsOptions) {
   }
 
   onMounted(() => {
+    syncWindowTheme();
     window.addEventListener("keydown", handleKeyDown);
 
     if (isWailsRuntime() && window.runtime && typeof window.runtime.EventsOn === "function") {

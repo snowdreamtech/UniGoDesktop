@@ -117,6 +117,9 @@ func RunWails() error {
 	if isDark {
 		macAppearance = mac.NSAppearanceNameDarkAqua
 		backgroundColour = &options.RGBA{R: 7, G: 10, B: 18, A: 255}
+	}
+
+	if cfgTheme == "dark" {
 		winTheme = windows.Dark
 	} else if cfgTheme == "light" {
 		winTheme = windows.Light

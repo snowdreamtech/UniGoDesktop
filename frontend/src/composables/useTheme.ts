@@ -52,6 +52,11 @@ function updateDomAndWindow(themeName: string, applied: "dark" | "light") {
     try {
       if (themeName === "system") {
         WindowSetSystemDefaultTheme();
+        if (applied === "dark") {
+          WindowSetBackgroundColour(7, 10, 18, 255);
+        } else {
+          WindowSetBackgroundColour(241, 245, 249, 255);
+        }
       } else if (applied === "dark") {
         WindowSetDarkTheme();
         WindowSetBackgroundColour(7, 10, 18, 255);
@@ -123,4 +128,8 @@ export function useTheme() {
     getActiveTheme,
     toggleTheme,
   };
+}
+
+export function syncWindowTheme() {
+  updateDomAndWindow(currentTheme.value, resolveEffectiveTheme(currentTheme.value));
 }
