@@ -67,6 +67,14 @@ function updateDomAndWindow(themeName: string, applied: "dark" | "light") {
     } catch (e) {
       console.warn("Failed to synchronize window theme:", e);
     }
+
+    try {
+      if (typeof (window as any).go?.main?.App?.SetTheme === "function") {
+        (window as any).go.main.App.SetTheme(themeName);
+      }
+    } catch (e) {
+      // Ignore errors in non-wails environment
+    }
   }
 }
 

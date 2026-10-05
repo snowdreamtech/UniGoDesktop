@@ -91,7 +91,7 @@ func (a *App) startup(ctx context.Context) {
 
 	if cfg, err := config.Load(); err == nil && cfg != nil {
 		if strings.HasPrefix(strings.ToLower(cfg.Language), "zh") {
-			privilege.SetDefaultElevationPrompt("UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。")
+			privilege.SetDefaultElevationPrompt("UniGoDesktop éœ€è¦ç®¡ç†å‘˜æƒé™ä»¥è®¿é—®åº•å±‚å­˜å‚¨è®¾å¤‡ä¸Žç³»ç»Ÿèµ„æºã€‚")
 		}
 	}
 
@@ -358,8 +358,14 @@ func (a *App) SaveConfig(cfg *config.AppConfig) error {
 	if err := cfg.Save(); err != nil {
 		return err
 	}
+	a.SetTheme(cfg.Theme)
+	return nil
+}
+
+// SetTheme updates the application window appearance and synchronizes the native titlebar theme.
+func (a *App) SetTheme(theme string) {
 	if a.ctx != nil && a.ctx.Value("frontend") != nil {
-		switch cfg.Theme {
+		switch theme {
 		case "dark":
 			wailsRuntime.WindowSetDarkTheme(a.ctx)
 			wailsRuntime.WindowSetBackgroundColour(a.ctx, 7, 10, 18, 255)
@@ -375,7 +381,8 @@ func (a *App) SaveConfig(cfg *config.AppConfig) error {
 			}
 		}
 	}
-	return nil
+	sysinfo.SyncTitleBarTheme(theme)
+	logger.Info("Synchronized application and titlebar theme", "theme", theme)
 }
 
 // ClearProxyPassword removes the saved proxy password from the system credential store.
@@ -432,7 +439,7 @@ func (a *App) RestartApp() error {
 // ReloadAppMenu rebuilds and updates the native application menu with the specified language.
 func (a *App) ReloadAppMenu(lang string) error {
 	if strings.HasPrefix(strings.ToLower(lang), "zh") {
-		privilege.SetDefaultElevationPrompt("UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。")
+		privilege.SetDefaultElevationPrompt("UniGoDesktop éœ€è¦ç®¡ç†å‘˜æƒé™ä»¥è®¿é—®åº•å±‚å­˜å‚¨è®¾å¤‡ä¸Žç³»ç»Ÿèµ„æºã€‚")
 	} else {
 		privilege.SetDefaultElevationPrompt("UniGoDesktop requires administrator privileges to access raw storage devices and system resources.")
 	}
@@ -623,7 +630,7 @@ func (a *App) RequestPrivilegeElevation(customPrompt string) (bool, error) {
 			lang = strings.ToLower(cfg.Language)
 		}
 		if strings.HasPrefix(lang, "zh") {
-			prompt = "UniGoDesktop 需要管理员权限以访问底层存储设备与系统资源。"
+			prompt = "UniGoDesktop éœ€è¦ç®¡ç†å‘˜æƒé™ä»¥è®¿é—®åº•å±‚å­˜å‚¨è®¾å¤‡ä¸Žç³»ç»Ÿèµ„æºã€‚"
 		} else {
 			prompt = privilege.GetDefaultElevationPrompt()
 		}

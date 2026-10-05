@@ -125,6 +125,11 @@ func RunWails() error {
 		winTheme = windows.Light
 	}
 
+	winBackdrop := windows.Auto
+	if sysinfo.SupportsMicaBackdrop() {
+		winBackdrop = windows.Mica
+	}
+
 	return wails.Run(&options.App{
 		Title:       "UniGoDesktop",
 		Width:       1180,
@@ -142,6 +147,7 @@ func RunWails() error {
 			time.AfterFunc(50*time.Millisecond, func() {
 				wailsRuntime.Show(ctx)
 				wailsRuntime.WindowShow(ctx)
+				sysinfo.SyncTitleBarTheme(cfgTheme)
 			})
 		},
 		OnShutdown:    app.shutdown,
@@ -159,7 +165,21 @@ func RunWails() error {
 			WindowIsTranslucent:  sysinfo.SupportsMicaBackdrop(),
 			DisableWindowIcon:    false,
 			Theme:                winTheme,
-			BackdropType:         windows.Mica,
+			CustomTheme: &windows.ThemeSettings{
+				DarkModeTitleBar:           windows.RGB(7, 10, 18),
+				DarkModeTitleBarInactive:   windows.RGB(15, 23, 42),
+				DarkModeTitleText:          windows.RGB(241, 245, 249),
+				DarkModeTitleTextInactive:  windows.RGB(148, 163, 184),
+				DarkModeBorder:             windows.RGB(30, 41, 59),
+				DarkModeBorderInactive:     windows.RGB(30, 41, 59),
+				LightModeTitleBar:          windows.RGB(241, 245, 249),
+				LightModeTitleBarInactive:  windows.RGB(226, 232, 240),
+				LightModeTitleText:         windows.RGB(15, 23, 42),
+				LightModeTitleTextInactive: windows.RGB(100, 116, 139),
+				LightModeBorder:            windows.RGB(226, 232, 240),
+				LightModeBorderInactive:    windows.RGB(226, 232, 240),
+			},
+			BackdropType:         winBackdrop,
 		},
 		Mac: &mac.Options{
 			TitleBar:             mac.TitleBarHiddenInset(),
@@ -184,3 +204,4 @@ func RunWails() error {
 func init() {
 	cmd.WailsRunner = RunWails
 }
+

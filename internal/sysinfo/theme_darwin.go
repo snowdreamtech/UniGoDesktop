@@ -24,3 +24,7 @@ func IsSystemDarkTheme() bool {
 func SupportsMicaBackdrop() bool {
 	return false
 }
+
+// SyncTitleBarTheme is a no-op on macOS as window appearance is handled natively by Cocoa / NSAppearance.
+func SyncTitleBarTheme(theme string) {
+}

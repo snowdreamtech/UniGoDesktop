@@ -27,6 +27,7 @@ declare global {
           CheckUpdate(): Promise<any>;
           GetConfig(): Promise<any>;
           SaveConfig(cfg: any): Promise<any>;
+          SetTheme?(theme: string): Promise<void>;
           OpenURL(url: string): Promise<void>;
           ReloadAppMenu?(lang: string): Promise<void>;
           GetRecentLogs?(): Promise<any>;

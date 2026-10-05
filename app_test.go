@@ -238,6 +238,11 @@ func TestApp_HardwareAndHypervisorAPIs(t *testing.T) {
 	err = app.StopVM()
 	assert.NoError(t, err)
 
+	// SetTheme executes safely
+	app.SetTheme("dark")
+	app.SetTheme("light")
+	app.SetTheme("system")
+
 	// IsPrivileged returns boolean
 	_ = app.IsPrivileged()
 
