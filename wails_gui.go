@@ -156,10 +156,10 @@ func RunWails() error {
 		Windows: &windows.Options{
 			WebviewUserDataPath:  resolveWindowsUserDataPath(),
 			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
+			WindowIsTranslucent:  sysinfo.SupportsMicaBackdrop(),
 			DisableWindowIcon:    false,
 			Theme:                winTheme,
-			BackdropType:         windows.Auto,
+			BackdropType:         windows.Mica,
 		},
 		Mac: &mac.Options{
 			TitleBar:             mac.TitleBarHiddenInset(),
