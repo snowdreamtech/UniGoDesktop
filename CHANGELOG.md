@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.12.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.11.0...v0.12.0) (2026-10-11)
+
+
+### 🚀 Features
+
+* **gui:** singleton toast notification and enhanced system language detection ([d6d8b29](https://github.com/snowdreamtech/UniGoDesktop/commit/d6d8b29c568710f0df714a86b9502efb67a60bb0))
+* **scripts:** enhance cross-platform dev, build and preflight runners ([f56e508](https://github.com/snowdreamtech/UniGoDesktop/commit/f56e5084e608d768e2ae2ddf111e32a20132c577))
+* **theme:** resolve native window titlebar synchronization with dark and light themes ([56e6e35](https://github.com/snowdreamtech/UniGoDesktop/commit/56e6e3575cd21d4a633aa448ba1361df40ffb013))
+* **theme:** synchronize native windows titlebar with active application theme ([98fef7c](https://github.com/snowdreamtech/UniGoDesktop/commit/98fef7cb3e120daba19131f3768852ea9dc27c85))
+* **ui:** add disabled prop support to custom select component ([5a5fa93](https://github.com/snowdreamtech/UniGoDesktop/commit/5a5fa93ca0f8849ef162cc0744bcd21f4fe2a46e))
+* **window:** enable windows 11 mica backdrop translucency support ([bdab769](https://github.com/snowdreamtech/UniGoDesktop/commit/bdab7696e113bdef8729613c3290098e461cbba9))
+
+
+### 🐛 Bug Fixes
+
+* **dev:** avoid cleaning locked dev binary in test:wails ([47299d5](https://github.com/snowdreamtech/UniGoDesktop/commit/47299d51e455074bd9cecfa2eb29f4dea513a38b))
+* **dev:** resolve main module detection and cross-platform task execution ([b27f1bd](https://github.com/snowdreamtech/UniGoDesktop/commit/b27f1bd00ca64c5e8bf81b614a0dad4276b69458))
+* **dev:** use cross-platform node script for test:wails artifact cleanup ([5d506f2](https://github.com/snowdreamtech/UniGoDesktop/commit/5d506f21a07c216fc5e2f75d7b1a8349a36f6a0b))
+* **i18n:** ensure canonical en-US.ts is also formatted by prettier on sync ([4d30419](https://github.com/snowdreamtech/UniGoDesktop/commit/4d30419e7f14becb7966667f9ac58b2b5abc35d2))
+* **i18n:** format updated locale files with prettier and support flexible quote parsing ([a7f0294](https://github.com/snowdreamtech/UniGoDesktop/commit/a7f0294b7817dde1ddd0fd97afb9124afc14ecb4))
+* **lint:** enhance cross-platform pre-commit hooks and symlink handling ([ca6d7fc](https://github.com/snowdreamtech/UniGoDesktop/commit/ca6d7fc0af66870a4fff8a1adf069a2764ea538c))
+* **privilege:** explicitly terminate worker daemon on shutdown to prevent Windows binary file lock ([7d44387](https://github.com/snowdreamtech/UniGoDesktop/commit/7d44387b1f83408866ce19131e40d5b4896529e8))
+* **test:** resolve flakiness in TestProgressIndicator_ShowPercentage ([57ed1d1](https://github.com/snowdreamtech/UniGoDesktop/commit/57ed1d1620f16cf7c396153e9f8b37d640383f1d))
+* **test:** resolve Windows symlink privilege and downloader timeout flakiness ([d15fde1](https://github.com/snowdreamtech/UniGoDesktop/commit/d15fde15a409258f7808bd7bcafef12988540701))
+
+
+### ♻️ Miscellaneous Chores
+
+* **deps:** sync dependabot config and unirtm toolchain ([57ef4d1](https://github.com/snowdreamtech/UniGoDesktop/commit/57ef4d1335332b7b67789c9899a04921f23c8bec))
+* **deps:** sync dependabot config and unirtm toolchain ([06d4011](https://github.com/snowdreamtech/UniGoDesktop/commit/06d4011c05b618d7f828e2f5f003ea1ea50fb7c4))
+* **lint:** improve pre-commit symlink safety and cross-platform git rules ([4e69904](https://github.com/snowdreamtech/UniGoDesktop/commit/4e69904d4159f4392ca8be42a2c1de807458a043))
+* **security:** sync osv-scanner ignore list for Go stdlib and transitive dev dependencies ([5efaebc](https://github.com/snowdreamtech/UniGoDesktop/commit/5efaebc3f84e1aef67c58caf46901e1ddbe790a7))
+
 ## [0.11.0](https://github.com/snowdreamtech/UniGoDesktop/compare/v0.10.0...v0.11.0) (2026-10-02)
 
 
