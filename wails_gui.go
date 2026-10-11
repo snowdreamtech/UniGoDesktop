@@ -141,8 +141,17 @@ func RunWails() error {
 			Assets: assets,
 		},
 		BackgroundColour: backgroundColour,
-		Menu:             BuildAppMenu(app, "auto"),
-		OnStartup:        app.startup,
+		Menu: BuildAppMenu(app, func() string {
+			if cfg, err := config.Load(); err == nil && cfg != nil && cfg.Language != "" {
+				return cfg.Language
+			}
+			return "auto"
+		}()),
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop:     true,
+			DisableWebViewDrop: false,
+		},
+		OnStartup: app.startup,
 		OnDomReady: func(ctx context.Context) {
 			time.AfterFunc(50*time.Millisecond, func() {
 				wailsRuntime.Show(ctx)

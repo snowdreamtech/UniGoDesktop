@@ -78,21 +78,52 @@ const DEFAULT_LOCALE = "zh-CN";
 
 export function detectSystemLocale(): string {
   if (typeof navigator === "undefined") return DEFAULT_LOCALE;
+  if (Array.isArray(navigator.languages) && navigator.languages.length > 0) {
+    for (const l of navigator.languages) {
+      const matched = SUPPORTED_LANGUAGES.find((item) => item.code === l || item.code.startsWith(l.split("-")[0]));
+      if (matched) return matched.code;
+    }
+  }
   const navLang = navigator.language;
-  const matched = SUPPORTED_LANGUAGES.find((l) => l.code === navLang || l.code.startsWith(navLang.split("-")[0]));
-  return matched ? matched.code : DEFAULT_LOCALE;
+  if (navLang) {
+    const matched = SUPPORTED_LANGUAGES.find((l) => l.code === navLang || l.code.startsWith(navLang.split("-")[0]));
+    if (matched) return matched.code;
+  }
+  return DEFAULT_LOCALE;
 }
 
-function getInitialLocale(): string {
-  const saved = typeof localStorage !== "undefined" ? localStorage.getItem("unigo_locale") : null;
-  if (saved && saved !== "auto" && SUPPORTED_LANGUAGES.some((l) => l.code === saved)) {
-    return saved;
+export async function syncSystemLocale(): Promise<string> {
+  try {
+    const app = (window as any)?.go?.main?.App;
+    if (app && typeof app.GetSystemLocale === "function") {
+      const sysLoc = await app.GetSystemLocale();
+      if (sysLoc && SUPPORTED_LANGUAGES.some((l) => l.code === sysLoc)) {
+        return sysLoc;
+      }
+    }
+  } catch {
+    // ignore
   }
   return detectSystemLocale();
 }
 
+export function resolveAutoLocale(): string {
+  return detectSystemLocale();
+}
+
+export function getInitialLocale(): string {
+  const saved = typeof localStorage !== "undefined" ? localStorage.getItem("unigo_locale") : null;
+  if (saved === "auto") {
+    return resolveAutoLocale();
+  }
+  if (saved && SUPPORTED_LANGUAGES.some((l) => l.code === saved)) {
+    return saved;
+  }
+  return DEFAULT_LOCALE;
+}
+
 export const selectedLangSetting = ref<string>(
-  (typeof localStorage !== "undefined" && localStorage.getItem("unigo_locale")) || "auto"
+  (typeof localStorage !== "undefined" && localStorage.getItem("unigo_locale")) || DEFAULT_LOCALE
 );
 export const currentLocale = ref<string>(getInitialLocale());
 export const currentLang = currentLocale;
@@ -102,7 +133,7 @@ export async function setLocale(locale: string) {
   let targetLocale = locale;
 
   if (locale === "auto") {
-    targetLocale = detectSystemLocale();
+    targetLocale = await syncSystemLocale();
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("unigo_locale", "auto");
     }
@@ -131,12 +162,27 @@ export async function setLocale(locale: string) {
     }
   }
 
+  const previousLocale = currentLocale.value;
   currentLocale.value = targetLocale;
   updateDocumentDir();
+
+  if (previousLocale !== targetLocale) {
+    const app = typeof window !== "undefined" ? (window as any)?.go?.main?.App : undefined;
+    if (app && typeof app.LogAction === "function") {
+      app.LogAction("INFO", "Application display language changed", targetLocale);
+    }
+  }
 }
 
 export const isRtl = computed(() => {
-  return ["ar-SA", "he-IL", "fa-IR", "ur-PK"].includes(currentLocale.value);
+  const lang = currentLocale.value.toLowerCase();
+  return (
+    ["ar-sa", "he-il", "fa-ir", "ur-pk"].includes(lang) ||
+    lang.startsWith("ar") ||
+    lang.startsWith("he") ||
+    lang.startsWith("fa") ||
+    lang.startsWith("ur")
+  );
 });
 
 export function updateDocumentDir() {
@@ -144,6 +190,9 @@ export function updateDocumentDir() {
     const dir = isRtl.value ? "rtl" : "ltr";
     document.documentElement.setAttribute("dir", dir);
     document.documentElement.dir = dir;
+    if (document.body) {
+      document.body.setAttribute("dir", dir);
+    }
   }
 }
 
@@ -152,7 +201,7 @@ export const setLanguage = setLocale;
 // Asynchronously load initial locale if not pre-bundled
 const initLoc = getInitialLocale();
 if (initLoc !== "zh-CN" && initLoc !== "en-US") {
-  setLocale(selectedLangSetting.value === "auto" ? "auto" : initLoc);
+  setLocale(initLoc);
 } else {
   updateDocumentDir();
 }
