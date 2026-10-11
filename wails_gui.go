@@ -188,7 +188,7 @@ func RunWails() error {
 				LightModeBorder:            windows.RGB(226, 232, 240),
 				LightModeBorderInactive:    windows.RGB(226, 232, 240),
 			},
-			BackdropType:         winBackdrop,
+			BackdropType: winBackdrop,
 		},
 		Mac: &mac.Options{
 			TitleBar:             mac.TitleBarHiddenInset(),
@@ -213,4 +213,3 @@ func RunWails() error {
 func init() {
 	cmd.WailsRunner = RunWails
 }
-
