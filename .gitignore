@@ -806,4 +806,6 @@ sbom.json
 completions/
 manpages/
 unigo
+unigodesktop
+*.md5
 .trivycache/
